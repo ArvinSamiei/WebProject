@@ -8,7 +8,7 @@ export class Header extends Component {
 	renderLogin = () => {
 		if (
 			(!this.props.isLoggedIn && !this.props.isSignedup) &&
-			!localStorage.getItem("username")
+			!document.cookie
 		) {
 			return (
 				<li className="nav-item">
@@ -33,7 +33,7 @@ export class Header extends Component {
 	renderSignup = () => {
 		if (
 			(!this.props.isLoggedIn && !this.props.isSignedup) &&
-			!localStorage.getItem("username")
+			!document.cookie
 		) {
 			return (
 				<li className="nav-item">
@@ -64,9 +64,10 @@ export class Header extends Component {
 		}
 	}
 
+
 	render() {
 		return (
-			<nav className="navbar navbar-expand-lg navbar-light bg-dark">
+			<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 				{this.renderImage()}
 				<div className="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul className="navbar-nav mr-auto">

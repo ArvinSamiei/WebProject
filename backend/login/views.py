@@ -12,6 +12,9 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
+from django.http import Http404
+from django.utils import timezone
+from django.core import serializers
 
 
 @api_view(['POST'])
@@ -22,8 +25,15 @@ def login(request):
     username = body['username']
     password = body['password']
     print(username, password)
-    if User.objects.filter(username=username).filter(password=password).exists():
-        return Response({'message': 'Login Successful'}, status=status.HTTP_200_OK)
+    queryset = User.objects.filter(username=username).filter(password=password)
+    if queryset.exists():
+        user = queryset[0]
+        user.last_login = timezone.now()
+        user.save()
+        return Response({'message': 'Login Successful'}, status=status.HTTP_200_OK, headers={
+            'Set-Cookie': 'username='+username,
+            'Access-Control-Expose-Headers': '*'
+        })
     else:
         return Response({'message': 'Login Failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -44,7 +54,10 @@ def signup(request):
     except IntegrityError as e:
         if 'unique constraint' in e.message:
             return Response('You Have Already SignedUp', status=status.HTTP_400_BAD_REQUEST)
-    return Response('SignUp Succesful', status=status.HTTP_200_OK)
+    return Response('SignUp Succesful', status=status.HTTP_200_OK, headers={
+        'Set-Cookie': 'username='+username,
+        'Access-Control-Expose-Headers': '*'
+    })
 
 
 @api_view(['POST'])
@@ -58,9 +71,35 @@ def uploadImage(request):
     user.save()
     return Response('', status=status.HTTP_200_OK)
 
+
 def download_image(request, username):
     user = User.objects.get(username=username)
     image_name = str(user.image)
     print(image_name)
-    with open(image_name, "rb") as f:
-        return HttpResponse(f.read(), content_type="image/jpeg")
+    try:
+        with open(image_name, "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+    except IOError as e:
+        with open('images/default-user-icon-profile.png', "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+
+
+def send_profile(request, username):
+    user = User.objects.filter(username=username)
+    product = serializers.serialize(
+        'json', user)
+    return HttpResponse(product)
+
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser])
+@csrf_exempt
+def createPost(request):
+    image = request.data['image']
+    title = request.data['title']
+    text = request.data['text']
+    id = request.data['id']
+    typ = request.data['type']
+    post = Post(creater_type=typ, creator_id=id, title=title, text=text, image=image)
+    post.save()
+    return Response('', status=status.HTTP_200_OK)

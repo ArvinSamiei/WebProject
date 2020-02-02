@@ -5,6 +5,8 @@ import PostList from "./PostList";
 import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
 import  Signup  from "./Signup";
+import Profile from './Profile'
+import  CreatePost  from "./posts/CreatePost";
 
 
 export default class App extends Component {
@@ -15,8 +17,12 @@ export default class App extends Component {
 					<Header />
 					<Switch>
 						<PrivateRoute
-							path="/onlyAuthorizedAllowedHere/"
-							component={PostList}
+							path="/profile"
+							component={Profile}
+						/>
+						<PrivateRoute
+							path="/createPost"
+							component={CreatePost}
 						/>
 						<Route
 							exact
@@ -36,7 +42,7 @@ export default class App extends Component {
 								</div>
 							)}
 						/>
-						
+												
 					</Switch>
 				</BrowserRouter>
 			</div>
