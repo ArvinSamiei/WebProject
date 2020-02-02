@@ -4,6 +4,7 @@ import { Router, BrowserRouter, Route, Switch } from "react-router-dom";
 import PostList from "./PostList";
 import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
+import  Signup  from "./Signup";
 
 
 export default class App extends Component {
@@ -19,6 +20,15 @@ export default class App extends Component {
 						/>
 						<Route
 							exact
+							path="/signup"
+							render={() => (
+								<div>
+									<Signup />
+								</div>
+							)}
+						/>
+						<Route
+							exact
 							path="/login"
 							render={() => (
 								<div>
@@ -26,6 +36,7 @@ export default class App extends Component {
 								</div>
 							)}
 						/>
+						
 					</Switch>
 				</BrowserRouter>
 			</div>

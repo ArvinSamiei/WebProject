@@ -8,7 +8,11 @@ export class Login extends Component {
 
 	renderText = () => {
 		if (!this.props.isLoggedIn && this.props.messageText) {
-			return <div className="p-3 mb-2 bg-danger text-white">{this.props.messageText}</div>;
+			return (
+				<div className="p-3 mb-2 bg-danger text-white">
+					{this.props.messageText}
+				</div>
+			);
 		} else {
 		}
 	};
@@ -41,7 +45,6 @@ export class Login extends Component {
 
 				<div className="Login">
 					<form onSubmit={this.handleSubmit}>
-						
 						<div className="form-group">
 							<label htmlFor="username">Username: </label>
 							<input
@@ -80,9 +83,12 @@ export class Login extends Component {
 	}
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = state => {
+    console.log(state)
+    return ({
+    
 	isLoggedIn: state.login.success,
 	messageText: state.login.message,
-});
+})};
 
 export default connect(mapStateToProps, { login })(Login);
