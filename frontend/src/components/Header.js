@@ -67,7 +67,7 @@ export class Header extends Component {
 										e.stopPropagation();
 									}}
 								>
-									Home <span class="sr-only">(current)</span>
+									Home <span className="sr-only">(current)</span>
 								</Link>
 						</li>
 						{this.renderLogin()}

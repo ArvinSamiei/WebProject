@@ -12,8 +12,8 @@ export const login = (username, password) => {
                     localStorage.setItem('username', username)
                     dispatch({ type: "LOGIN", payload: {success: true, message: r.message} });
                 }
-                    else
-                        dispatch({ type: "LOGIN", payload: {success: false, message: r.message } });
+			}, e => {
+				dispatch({ type: "LOGIN", payload: {success: false, message: e.message } });
 			});
 	};
 };

@@ -3,33 +3,33 @@ import { connect } from "react-redux";
 import { login } from "../actions";
 import { Redirect } from "react-router-dom";
 
-
 export class Login extends Component {
-	state = { username: "", password: "" };
+	state = { username: "", password: "", tried: false };
 
 	renderText = () => {
-		if (!this.props.isLoggedIn) {
-			return <div>{this.props.messageText}</div>;
+		if (!this.props.isLoggedIn && this.props.messageText) {
+			return <div className="p-3 mb-2 bg-danger text-white">{this.props.messageText}</div>;
 		} else {
 		}
 	};
 
-	handleUserChange = (evt) => {
+	handleUserChange = evt => {
 		this.setState({
 			username: evt.target.value,
 		});
-	}
+	};
 
-	handlePassChange = (evt) => {
+	handlePassChange = evt => {
 		this.setState({
 			password: evt.target.value,
 		});
-    }
-    
-    handleSubmit = (evt) => {
-		evt.preventDefault()
-        this.props.login(this.state.username, this.state.password)
-    }
+	};
+
+	handleSubmit = evt => {
+		this.setState({ tried: true });
+		evt.preventDefault();
+		this.props.login(this.state.username, this.state.password);
+	};
 
 	render() {
 		if (this.props.isLoggedIn) {
@@ -41,12 +41,7 @@ export class Login extends Component {
 
 				<div className="Login">
 					<form onSubmit={this.handleSubmit}>
-						{this.state.error && (
-							<h3 data-test="error" onClick={this.dismissError}>
-								<button onClick={this.dismissError}>✖</button>
-								{this.state.error}
-							</h3>
-						)}
+						
 						<div className="form-group">
 							<label htmlFor="username">Username: </label>
 							<input
@@ -69,7 +64,13 @@ export class Login extends Component {
 								onChange={this.handlePassChange}
 							/>
 						</div>
-						<button onSubmit={e => {this.handleSubmit(e)}} type="submit" className="btn btn-primary">
+						<button
+							onSubmit={e => {
+								this.handleSubmit(e);
+							}}
+							type="submit"
+							className="btn btn-primary"
+						>
 							Submit
 						</button>
 					</form>
