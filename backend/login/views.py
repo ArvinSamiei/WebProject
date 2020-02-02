@@ -123,3 +123,13 @@ def fetchAllPosts(request):
     posts = serializers.serialize(
         'json', Post.objects.all())
     return HttpResponse(posts)
+@api_view(['GET',])
+def download_image_post(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    image_name = str(post.image)
+    print(image_name)
+    try:
+        with open(image_name, "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+    except IOError as e:
+        return Response('', status=status.HTTP_404_NOT_FOUND)

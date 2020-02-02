@@ -2,16 +2,13 @@ import React from "react";
 // import faker from "faker";
 
 class Post extends React.Component {
-	
-
-	
-
-	
-
 	renderImageOfPost = () => {
-		if (this.props.post.image) {
+		if (this.props.post.fields.image !== "undefined") {
 			return (
-				<img src={`localhost:8000/posts/image/${this.props.post.fields.image}`}></img>
+				<img
+					src={`http://localhost:8000/images/posts/${this.props.post.pk}`}
+					style={{width: '350px'}}
+				></img>
 			);
 		} else return null;
 	};
@@ -31,20 +28,15 @@ class Post extends React.Component {
 		for (let i = 0; i < this.props.users.length; i++) {
 			if (this.props.users[i].id == this.props.post.fields.creator_id)
 				user = this.props.users[i];
-				console.log(user)
+			console.log(user);
 		}
-		console.log('heiiiil')
+		console.log("heiiiil");
 		if (user === null) {
 			return null;
 		}
-		
-		return (
-			
-			<div
-				className="card"
 
-				
-			>
+		return (
+			<div className="card">
 				<div className="profile-header-container">
 					<div className="profile-header-img">
 						{/* <img className="img-rounded" src={faker.image.avatar()} /> */}
@@ -52,7 +44,9 @@ class Post extends React.Component {
 				</div>
 				<div className="card-body">
 					{this.renderImageOfPost()}
-					<h2 className="card-title">By: {user.first_name + " " + user.last_name}</h2>
+					<h2 className="card-title">
+						By: {user.first_name + " " + user.last_name}
+					</h2>
 					<h5 className="card-title">{this.props.post.fields.title}</h5>
 					<p
 						className="card-text"

@@ -12,5 +12,6 @@ urlpatterns = [
     path('posts/createPost/', views.createPost),
     path('users/profiles/<int:user_id>/', views.fetch_user),
     path('posts', views.fetchAllPosts),
+    path('images/posts/<int:post_id>', views.download_image_post),
     
 ]
