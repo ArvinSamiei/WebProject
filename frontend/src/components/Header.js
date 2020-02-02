@@ -7,8 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 export class Header extends Component {
 	renderLogin = () => {
 		if (
-			(!this.props.isLoggedIn && !this.props.isSignedup) ||
-			localStorage.getItem("username")
+			(!this.props.isLoggedIn && !this.props.isSignedup) &&
+			!localStorage.getItem("username")
 		) {
 			return (
 				<li className="nav-item">
@@ -32,8 +32,8 @@ export class Header extends Component {
 
 	renderSignup = () => {
 		if (
-			(!this.props.isLoggedIn && !this.props.isSignedup) ||
-			localStorage.getItem("username")
+			(!this.props.isLoggedIn && !this.props.isSignedup) &&
+			!localStorage.getItem("username")
 		) {
 			return (
 				<li className="nav-item">
@@ -54,9 +54,20 @@ export class Header extends Component {
 		}
 	};
 
+	renderImage = () => {
+		let username = localStorage.getItem('username')
+		if(username){
+			return <img style={{width: '30px', height: '30px'}} src={`http://localhost:8000/users/images/${username}`}></img>
+		}
+		else{
+			return null;
+		}
+	}
+
 	render() {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-light bg-dark">
+				{this.renderImage()}
 				<div className="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul className="navbar-nav mr-auto">
 						<li className="nav-item active">

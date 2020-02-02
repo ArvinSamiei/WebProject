@@ -11,6 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import HttpResponse
 
 
 @api_view(['POST'])
@@ -56,3 +57,10 @@ def uploadImage(request):
     user.image = image
     user.save()
     return Response('', status=status.HTTP_200_OK)
+
+def download_image(request, username):
+    user = User.objects.get(username=username)
+    image_name = str(user.image)
+    print(image_name)
+    with open(image_name, "rb") as f:
+        return HttpResponse(f.read(), content_type="image/jpeg")
