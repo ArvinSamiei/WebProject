@@ -27,6 +27,61 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'A-IM',
+    'Accept',
+    'Accept-Charset',
+    'Accept-Encoding',
+    'Accept-Language',
+    'Accept-Datetime',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers',
+    'Authorization',
+    'Cache-Control',
+    'Connection',
+    'Content-Length',
+    'Content-Type',
+    'Cookie',
+    'Date',
+    'Expect',
+    'Forwarded',
+    'From',
+    'Host',
+    'If-Match',
+    'If-Modified-Since',
+    'If-None-Match',
+    'If-Range',
+    'If-Unmodified-Since',
+    'Max-Forwards',
+    'Origin',
+    'Pragma',
+    'Proxy-Authorization',
+    'Range',
+    'Referer',
+    'TE',
+    'User-Agent',
+    'Upgrade',
+    'Via',
+    'Warning',
+]
 
 
 # Application definition
@@ -39,7 +94,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'rest_framework'
+    'rest_framework',
+    'posts',
+    'login',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +138,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'web',
+        'NAME': 'web_test',
         'USER': 'postgres',
         'PASSWORD': '123456',
         'HOST': 'localhost',
