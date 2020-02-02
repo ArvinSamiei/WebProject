@@ -148,3 +148,39 @@ export const createPost = (id, title, text, type, image) => {
 			);
 	};
 };
+
+
+
+export const fetchPosts = (id) => {
+	return async function(dispatch) {
+		try{
+			let r = await backend.get(`/posts`, {
+				id
+			})
+			let posts = r.data
+			dispatch({type: 'FETCH_ALL_POSTS', payload: r.data})
+			for(let i = 0; i < posts.length; i++) {
+				try{
+					let user = await backend.get(`users/profiles/${posts[i].fields.creator_id}/`, {
+						id
+					})
+					dispatch({type:'FETCH_USERS', payload: {...user.data[0].fields, id: user.data[0].pk}})
+				}
+				catch(e){
+					if(e.status == 401){
+						dispatch({type: 'LOGOUT'})
+					}
+				}
+				
+
+			}
+		}
+		catch(e){
+			if(e.status == 401){
+				dispatch({type: 'LOGOUT'})
+			}
+		}
+		
+		
+	}
+}

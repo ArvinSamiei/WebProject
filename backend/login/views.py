@@ -31,7 +31,7 @@ def login(request):
         user.last_login = timezone.now()
         user.save()
         return Response({'message': 'Login Successful'}, status=status.HTTP_200_OK, headers={
-            'Set-Cookie': 'username='+username,
+            'Set-Cookie': 'id='+user.id,
             'Access-Control-Expose-Headers': '*'
         })
     else:
@@ -55,7 +55,7 @@ def signup(request):
         if 'unique constraint' in e.message:
             return Response('You Have Already SignedUp', status=status.HTTP_400_BAD_REQUEST)
     return Response('SignUp Succesful', status=status.HTTP_200_OK, headers={
-        'Set-Cookie': 'username='+username,
+        'Set-Cookie': 'id='+user.id,
         'Access-Control-Expose-Headers': '*'
     })
 
@@ -83,6 +83,16 @@ def download_image(request, username):
         with open('images/default-user-icon-profile.png', "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
 
+def download_image2(request, user_id):
+    user = User.objects.get(pk=user_id)
+    image_name = str(user.image)
+    print(image_name)
+    try:
+        with open(image_name, "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+    except IOError as e:
+        with open('images/default-user-icon-profile.png', "rb") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
 
 def send_profile(request, username):
     user = User.objects.filter(username=username)
@@ -90,6 +100,11 @@ def send_profile(request, username):
         'json', user)
     return HttpResponse(product)
 
+def fetch_user(request, user_id):
+    user = User.objects.filter(pk=user_id)
+    product = serializers.serialize(
+        'json', user)
+    return HttpResponse(product, content_type='application/json')
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
@@ -103,3 +118,8 @@ def createPost(request):
     post = Post(creater_type=typ, creator_id=id, title=title, text=text, image=image)
     post.save()
     return Response('', status=status.HTTP_200_OK)
+
+def fetchAllPosts(request):
+    posts = serializers.serialize(
+        'json', Post.objects.all())
+    return HttpResponse(posts)
