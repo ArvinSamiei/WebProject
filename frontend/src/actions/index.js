@@ -106,7 +106,7 @@ export const fetchUser = username => {
 const getCookie = name => {
 	var value = "; " + document.cookie;
 	var parts = value.split("; " + name + "=");
-	if (parts.length == 2)
+	if (parts.length === 2)
 		return parts
 			.pop()
 			.split(";")
@@ -136,7 +136,7 @@ export const createPost = (id, title, text, type, image) => {
 					});
 				},
 				e => {
-					if (e.status == 401) {
+					if (e.status === 401) {
 						dispatch(logout());
 					} else {
 						dispatch({
@@ -173,13 +173,13 @@ export const fetchPosts = (id, name) => {
 						payload: { ...user.data[0].fields, id: user.data[0].pk },
 					});
 				} catch (e) {
-					if (e.status == 401) {
+					if (e.status === 401) {
 						dispatch({ type: "LOGOUT" });
 					}
 				}
 			}
 		} catch (e) {
-			if (e.status == 401) {
+			if (e.status === 401) {
 				dispatch({ type: "LOGOUT" });
 			}
 		}
