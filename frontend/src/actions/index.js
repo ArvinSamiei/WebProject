@@ -185,3 +185,27 @@ export const fetchPosts = (id, name) => {
 		}
 	};
 };
+
+export const fetchUserAndFollowingState = (myId, hisId) => {
+	return async function(dispatch) {
+		let r = await backend.get(`users/othersProfile/${hisId}`, {
+			params: {
+				myId,
+			},
+		});
+		dispatch({
+			type: "OTHER_USER_FOLLOWING",
+			payload: { following: r.data.following },
+		});
+		backend.get(`users/profiles/${hisId}/`, {
+			params: {
+				id: myId,
+			},
+		}).then(user => {
+			dispatch({
+				type: "OTHER_USERS_INFO",
+				payload: { ...user.data[0].fields, id: user.data[0].pk },
+			});
+		});
+	};
+};

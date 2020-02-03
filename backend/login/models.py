@@ -16,7 +16,7 @@ class User(models.Model):
     password = models.CharField(max_length=35)
     email = models.EmailField(max_length=254, unique=True)
     image = models.ImageField(upload_to='images/', blank=True)
-    last_login = models.TimeField(default=timezone.now)
+    last_login = models.DateTimeField(default=timezone.now)
     followingUsers = models.ManyToManyField('self', related_name='following_users', through='UserRelation',
                                             blank=True)
     followingChannels = models.ManyToManyField(
@@ -25,8 +25,6 @@ class User(models.Model):
     @property
     def full_name(self):
         return self.first_name + ' ' + self.last_name
-
-    
 
     def __str__(self):
         return self.full_name
@@ -37,7 +35,7 @@ class UserRelation(models.Model):
         'User', related_name='follower', on_delete=models.CASCADE)
     followed = models.ForeignKey(
         'User', on_delete=models.CASCADE, related_name='followed')
-    
+
     # def findFollowers(self, user):
     #     followingUsers.objects.filter(followed=user).only("follower")
     # def findFollowings(self, user):
@@ -47,10 +45,19 @@ class UserRelation(models.Model):
 class Post(models.Model):
     creater_type = models.IntegerField()
     creator_id = models.IntegerField()
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=300)
     image = models.ImageField(upload_to='images/posts', blank=True)
     text = models.TextField()
-    create_date=models.TimeField(default=timezone.now)
+    create_date = models.DateTimeField(default=timezone.now)
+    likes = models.IntegerField(default=0)
+    dislikes = models.IntegerField(default=0)
+    comments = models.ManyToManyField('Comment')
+
+
+class Comment(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    replies = models.ManyToManyField('self', related_name='comment_replies')
+    text = models.TextField()
 
     def __str__(self):
         return self.title

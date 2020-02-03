@@ -1,5 +1,5 @@
 import React from "react";
-// import faker from "faker";
+import { Link } from "react-router-dom";
 
 class Post extends React.Component {
 	renderImageOfPost = () => {
@@ -7,7 +7,7 @@ class Post extends React.Component {
 			return (
 				<img
 					src={`http://localhost:8000/images/posts/${this.props.post.pk}`}
-					style={{width: '350px'}}
+					style={{ width: "350px" }}
 				></img>
 			);
 		} else return null;
@@ -42,9 +42,9 @@ class Post extends React.Component {
 				</div>
 				<div className="card-body">
 					{this.renderImageOfPost()}
-					<h2 className="card-title">
+					<Link className="card-title" to={`profile/${user.id}`}>
 						By: {user.first_name + " " + user.last_name}
-					</h2>
+					</Link>
 					<h5 className="card-title">{this.props.post.fields.title}</h5>
 					<p
 						className="card-text"

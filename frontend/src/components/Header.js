@@ -4,9 +4,14 @@ import { login, logout } from "../actions";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+
 export class Header extends Component {
 	renderLogin = () => {
-		if (!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username')) {
+		if (
+			!this.props.isLoggedIn &&
+			!this.props.isSignedup &&
+			!localStorage.getItem("username")
+		) {
 			return (
 				<li className="nav-item">
 					<Link
@@ -26,7 +31,11 @@ export class Header extends Component {
 	};
 
 	renderSignup = () => {
-		if (!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username')) {
+		if (
+			!this.props.isLoggedIn &&
+			!this.props.isSignedup &&
+			!localStorage.getItem("username")
+		) {
 			return (
 				<li className="nav-item">
 					<Link
@@ -47,7 +56,11 @@ export class Header extends Component {
 
 	renderProfile = () => {
 		if (
-			!(!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username'))
+			!(
+				!this.props.isLoggedIn &&
+				!this.props.isSignedup &&
+				!localStorage.getItem("username")
+			)
 		) {
 			return (
 				<li className="nav-item">
@@ -69,11 +82,7 @@ export class Header extends Component {
 
 	renderLogout = () => {
 		if (
-			!(
-				!this.props.isLoggedIn &&
-				!this.props.isSignedup &&
-				!document.cookie
-			)
+			!(!this.props.isLoggedIn && !this.props.isSignedup && !document.cookie)
 		) {
 			return (
 				<li className="nav-item">
@@ -109,6 +118,7 @@ export class Header extends Component {
 	};
 
 	render() {
+		
 		return (
 			<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 				{this.renderImage()}
@@ -126,6 +136,7 @@ export class Header extends Component {
 							</Link>
 						</li>
 						{this.renderLogin()}
+						{this.renderSignup()}
 						{this.renderProfile()}
 						{this.renderLogout()}
 					</ul>

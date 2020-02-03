@@ -7,6 +7,8 @@ import PrivateRoute from "./PrivateRoute";
 import Signup from "./Signup";
 import Profile from "./Profile";
 import CreatePost from "./posts/CreatePost";
+import OthersProfile from './OthersProfile'
+
 
 export default class App extends Component {
 	render() {
@@ -18,6 +20,15 @@ export default class App extends Component {
 						<PrivateRoute exact path="/profile" component={Profile} />
 						<PrivateRoute exact path="/" component={PostList} />
 						<PrivateRoute path="/createPost" component={CreatePost} />
+						<Route
+							exact
+							path="/profile/:id"
+							render={(props) => (
+								<div>
+									<OthersProfile id={props.match.params.id} />
+								</div>
+							)}
+						/>
 						<Route
 							exact
 							path="/signup"
