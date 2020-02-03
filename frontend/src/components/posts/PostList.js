@@ -3,7 +3,6 @@ import Post from "./Post";
 import { connect } from "react-redux";
 import "./PostList.css";
 import { fetchPosts, fetchUser } from "../../actions";
-import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 
 const SomeComponent = withRouter(props => <PostList {...props} />);

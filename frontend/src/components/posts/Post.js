@@ -28,9 +28,7 @@ class Post extends React.Component {
 		for (let i = 0; i < this.props.users.length; i++) {
 			if (this.props.users[i].id == this.props.post.fields.creator_id)
 				user = this.props.users[i];
-			console.log(user);
 		}
-		console.log("heiiiil");
 		if (user === null) {
 			return null;
 		}
