@@ -31,7 +31,7 @@ def login(request):
         user.last_login = timezone.now()
         user.save()
         return Response({'message': 'Login Successful'}, status=status.HTTP_200_OK, headers={
-            'Set-Cookie': 'id='+user.id,
+            'Set-Cookie': 'id=' + str(user.id),
             'Access-Control-Expose-Headers': '*'
         })
     else:
@@ -55,7 +55,7 @@ def signup(request):
         if 'unique constraint' in e.message:
             return Response('You Have Already SignedUp', status=status.HTTP_400_BAD_REQUEST)
     return Response('SignUp Succesful', status=status.HTTP_200_OK, headers={
-        'Set-Cookie': 'id='+user.id,
+        'Set-Cookie': 'id='+str(user.id),
         'Access-Control-Expose-Headers': '*'
     })
 
@@ -118,11 +118,40 @@ def createPost(request):
     post = Post(creater_type=typ, creator_id=id, title=title, text=text, image=image)
     post.save()
     return Response('', status=status.HTTP_200_OK)
+# @api_view(['GET'])
+
+def fetch_posts_following(id):
+    posts = Post.objects.all()
+    user = User.objects.get(pk=id)
+    followingUserse = UserRelation.objects.filter(follower=user).all()
+    followingUsers = []
+    for i in followingUserse:
+        followingUsers.append(i.followed)
+    print(followingUsers)
+    fetched_posts = []
+    for post in posts:
+        if post.creater_type == 0:
+            for followingUser in followingUsers:
+                if post.creator_id == followingUser.id:
+                    fetched_posts.append(post)
+        else:
+            for followingChannel in user.channels_set:
+                if post.creator_id == followingChannel.id:
+                    fetched_posts.append(post)
+    return fetched_posts
 
 def fetchAllPosts(request):
-    posts = serializers.serialize(
-        'json', Post.objects.all())
-    return HttpResponse(posts)
+    id = request.GET.get('id')
+    name = request.GET.get('name')
+    fetched_posts = []
+    if name=="Following":
+        fetched_posts = fetch_posts_following(id)
+    print(id)
+    
+    print(fetched_posts)
+    postse = serializers.serialize(
+        'json', fetched_posts)
+    return HttpResponse(postse)
 @api_view(['GET',])
 def download_image_post(request, post_id):
     post = Post.objects.get(pk=post_id)

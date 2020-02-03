@@ -1,28 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { login } from "../actions";
+import { login, logout } from "../actions";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export class Header extends Component {
 	renderLogin = () => {
-		if (
-			(!this.props.isLoggedIn && !this.props.isSignedup) &&
-			!document.cookie
-		) {
+		if (!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username')) {
 			return (
 				<li className="nav-item">
-					
-						<Link
-							className="nav-link"
-							to="/login"
-							onClick={e => {
-								e.stopPropagation();
-							}}
-						>
-							Login
-						</Link>
-					
+					<Link
+						className="nav-link"
+						to="/login"
+						onClick={e => {
+							e.stopPropagation();
+						}}
+					>
+						Login
+					</Link>
 				</li>
 			);
 		} else {
@@ -31,22 +26,18 @@ export class Header extends Component {
 	};
 
 	renderSignup = () => {
-		if (
-			(!this.props.isLoggedIn && !this.props.isSignedup) &&
-			!document.cookie
-		) {
+		if (!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username')) {
 			return (
 				<li className="nav-item">
-						<Link
-							className="nav-link"
-							to="/signup"
-							onClick={e => {
-								e.stopPropagation();
-							}}
-						>
-							Signup
-						</Link>
-					
+					<Link
+						className="nav-link"
+						to="/signup"
+						onClick={e => {
+							e.stopPropagation();
+						}}
+					>
+						Signup
+					</Link>
 				</li>
 			);
 		} else {
@@ -54,23 +45,48 @@ export class Header extends Component {
 		}
 	};
 
-	renderSignup = () => {
+	renderProfile = () => {
 		if (
-			!((!this.props.isLoggedIn && !this.props.isSignedup) &&
-			!document.cookie)
+			!(!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem('username'))
 		) {
 			return (
 				<li className="nav-item">
-						<Link
-							className="nav-link"
-							to="/profile"
-							onClick={e => {
-								e.stopPropagation();
-							}}
-						>
-							Profile
-						</Link>
-					
+					<Link
+						className="nav-link"
+						to="/profile"
+						onClick={e => {
+							e.stopPropagation();
+						}}
+					>
+						Profile
+					</Link>
+				</li>
+			);
+		} else {
+			return null;
+		}
+	};
+
+	renderLogout = () => {
+		if (
+			!(
+				!this.props.isLoggedIn &&
+				!this.props.isSignedup &&
+				!document.cookie
+			)
+		) {
+			return (
+				<li className="nav-item">
+					<Link
+						className="nav-link"
+						to="/login"
+						onClick={e => {
+							e.stopPropagation();
+							this.props.logout();
+						}}
+					>
+						Logout
+					</Link>
 				</li>
 			);
 		} else {
@@ -79,15 +95,18 @@ export class Header extends Component {
 	};
 
 	renderImage = () => {
-		let username = localStorage.getItem('username')
-		if(username){
-			return <img style={{width: '30px', height: '30px'}} src={`http://localhost:8000/users/images/${username}`}></img>
-		}
-		else{
+		let username = localStorage.getItem("username");
+		if (username) {
+			return (
+				<img
+					style={{ width: "30px", height: "30px" }}
+					src={`http://localhost:8000/users/images/${username}`}
+				></img>
+			);
+		} else {
 			return null;
 		}
-	}
-
+	};
 
 	render() {
 		return (
@@ -96,18 +115,19 @@ export class Header extends Component {
 				<div className="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul className="navbar-nav mr-auto">
 						<li className="nav-item active">
-								<Link
-									className="nav-link"
-									to="/"
-									onClick={e => {
-										e.stopPropagation();
-									}}
-								>
-									Home <span className="sr-only">(current)</span>
-								</Link>
+							<Link
+								className="nav-link"
+								to="/"
+								onClick={e => {
+									e.stopPropagation();
+								}}
+							>
+								Home <span className="sr-only">(current)</span>
+							</Link>
 						</li>
 						{this.renderLogin()}
-						{this.renderSignup()}
+						{this.renderProfile()}
+						{this.renderLogout()}
 					</ul>
 				</div>
 			</nav>
@@ -120,4 +140,4 @@ const mapStateToProps = state => ({
 	isSignedup: state.signup.success,
 });
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, { logout })(Header);

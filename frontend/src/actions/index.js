@@ -12,7 +12,6 @@ export const login = (username, password) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						console.log(r.headers);
 						document.cookie = `username=${username}`;
 						dispatch({
 							type: "LOGIN",
@@ -85,7 +84,8 @@ export const logout = () => {
 	return async function(dispatch) {
 		localStorage.removeItem("username");
 		localStorage.removeItem("time");
-		document.cookie = "";
+		document.cookie =
+			"username=username; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		dispatch({ type: "LOGOUT" });
 	};
 };
@@ -149,38 +149,39 @@ export const createPost = (id, title, text, type, image) => {
 	};
 };
 
-
-
-export const fetchPosts = (id) => {
+export const fetchPosts = (id, name) => {
 	return async function(dispatch) {
-		try{
+		try {
 			let r = await backend.get(`/posts`, {
-				id
-			})
-			let posts = r.data
-			dispatch({type: 'FETCH_ALL_POSTS', payload: r.data})
-			for(let i = 0; i < posts.length; i++) {
-				try{
-					let user = await backend.get(`users/profiles/${posts[i].fields.creator_id}/`, {
-						id
-					})
-					dispatch({type:'FETCH_USERS', payload: {...user.data[0].fields, id: user.data[0].pk}})
-				}
-				catch(e){
-					if(e.status == 401){
-						dispatch({type: 'LOGOUT'})
+				params: {
+					id,
+					name,
+				},
+			});
+			let posts = r.data;
+			dispatch({ type: "FETCH_ALL_POSTS", payload: r.data });
+			for (let i = 0; i < posts.length; i++) {
+				try {
+					let user = await backend.get(
+						`users/profiles/${posts[i].fields.creator_id}/`,
+						{
+							id,
+						},
+					);
+					dispatch({
+						type: "FETCH_USERS",
+						payload: { ...user.data[0].fields, id: user.data[0].pk },
+					});
+				} catch (e) {
+					if (e.status == 401) {
+						dispatch({ type: "LOGOUT" });
 					}
 				}
-				
-
+			}
+		} catch (e) {
+			if (e.status == 401) {
+				dispatch({ type: "LOGOUT" });
 			}
 		}
-		catch(e){
-			if(e.status == 401){
-				dispatch({type: 'LOGOUT'})
-			}
-		}
-		
-		
-	}
-}
+	};
+};

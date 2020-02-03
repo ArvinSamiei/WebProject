@@ -17,17 +17,16 @@ class User(models.Model):
     email = models.EmailField(max_length=254, unique=True)
     image = models.ImageField(upload_to='images/', blank=True)
     last_login = models.TimeField(default=timezone.now)
-    followingUsers = models.ManyToManyField('self', related_name='_followingUsers', through='UserRelation',
-                                            symmetrical=False, blank=True)
+    followingUsers = models.ManyToManyField('self', related_name='following_users', through='UserRelation',
+                                            blank=True)
     followingChannels = models.ManyToManyField(
-        'Channel', blank=True)
+        Channel, blank=True)
 
     @property
     def full_name(self):
         return self.first_name + ' ' + self.last_name
 
-    def findFollowers():
-        UserRelation.objects.filter(followed=self).only("follower")
+    
 
     def __str__(self):
         return self.full_name
@@ -38,6 +37,11 @@ class UserRelation(models.Model):
         'User', related_name='follower', on_delete=models.CASCADE)
     followed = models.ForeignKey(
         'User', on_delete=models.CASCADE, related_name='followed')
+    
+    # def findFollowers(self, user):
+    #     followingUsers.objects.filter(followed=user).only("follower")
+    # def findFollowings(self, user):
+    #     UserRelation.objects.filter(follower=user).only("followed")
 
 
 class Post(models.Model):
@@ -46,6 +50,6 @@ class Post(models.Model):
     title = models.CharField(max_length=30)
     image = models.ImageField(upload_to='images/posts', blank=True)
     text = models.TextField()
+
     def __str__(self):
         return self.title
-    
