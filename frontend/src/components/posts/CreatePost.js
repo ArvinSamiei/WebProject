@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { createPost, fetchUser } from "../../actions";
 import ImageUploader from "react-images-upload";
+import { Link } from "react-router-dom";
 
 class CreatePost extends Component {
 	state = { title: "", text: "", picture: [] };
@@ -40,7 +41,7 @@ class CreatePost extends Component {
 
 	render() {
 		return (
-			<div>
+			<div class="container">
 				<form onSubmit={this.handleSubmit}>
 					<div className="form-group">
 						<label htmlFor="title">Title</label>
@@ -73,6 +74,16 @@ class CreatePost extends Component {
 					<button type="submit" className="btn btn-primary">
 						Submit
 					</button>
+					<Link
+                        style={{marginLeft: '10px'}}
+						className="btn btn-primary"
+						to="/profile"
+						onClick={e => {
+							e.stopPropagation();
+						}}
+					>
+						Back
+					</Link>
 				</form>
 			</div>
 		);
