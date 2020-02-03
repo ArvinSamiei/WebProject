@@ -84,7 +84,6 @@ export class Login extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return ({
     
 	isLoggedIn: state.login.success,

@@ -21,14 +21,12 @@ class CreatePost extends Component {
 		this.setState({ text: e.target.value });
 	};
 	onDrop = picture => {
-		console.log(picture);
 		this.setState({
 			picture: this.state.picture.concat(picture),
 		});
 	};
 
 	handleSubmit = e => {
-		console.log("kgjhgklkjhlkjh;j");
 		e.preventDefault();
 		this.props.createPost(
 			this.props.user.id,
@@ -91,7 +89,6 @@ class CreatePost extends Component {
 }
 
 const mapStateToProps = state => {
-	console.log(state);
 	if (!state.user) {
 		return {
 			message: state.createPost.message,

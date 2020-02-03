@@ -68,7 +68,6 @@ class Signup extends Component {
 		);
 	};
 	onDrop = (picture) => {
-        console.log(picture)
         this.setState({
             picture: this.state.picture.concat(picture),
         });
