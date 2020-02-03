@@ -54,6 +54,30 @@ export class Header extends Component {
 		}
 	};
 
+	renderSignup = () => {
+		if (
+			!((!this.props.isLoggedIn && !this.props.isSignedup) &&
+			!document.cookie)
+		) {
+			return (
+				<li className="nav-item">
+						<Link
+							className="nav-link"
+							to="/profile"
+							onClick={e => {
+								e.stopPropagation();
+							}}
+						>
+							Profile
+						</Link>
+					
+				</li>
+			);
+		} else {
+			return null;
+		}
+	};
+
 	renderImage = () => {
 		let username = localStorage.getItem('username')
 		if(username){
