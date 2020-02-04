@@ -35,6 +35,8 @@ class UserRelation(models.Model):
         'User', related_name='follower', on_delete=models.CASCADE)
     followed = models.ForeignKey(
         'User', on_delete=models.CASCADE, related_name='followed')
+    class Meta:
+        unique_together = ('follower', 'followed',)
 
     # def findFollowers(self, user):
     #     followingUsers.objects.filter(followed=user).only("follower")
@@ -61,3 +63,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.title
+    

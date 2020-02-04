@@ -13,6 +13,7 @@ urlpatterns = [
     path('users/profiles/<int:user_id>/', views.fetch_user),
     path('posts', views.fetchAllPosts),
     path('images/posts/<int:post_id>', views.download_image_post),
-    path('users/othersProfile/<int:id>', views.others_profile)
+    path('users/othersProfile/<int:id>', views.others_profile),
+    path('users/follow', views.follow)
     
 ]

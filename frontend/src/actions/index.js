@@ -193,19 +193,74 @@ export const fetchUserAndFollowingState = (myId, hisId) => {
 				myId,
 			},
 		});
+		console.log(r.data.following);
 		dispatch({
 			type: "OTHER_USER_FOLLOWING",
 			payload: { following: r.data.following },
 		});
-		backend.get(`users/profiles/${hisId}/`, {
-			params: {
-				id: myId,
-			},
-		}).then(user => {
-			dispatch({
-				type: "OTHER_USERS_INFO",
-				payload: { ...user.data[0].fields, id: user.data[0].pk },
+		backend
+			.get(`users/profiles/${hisId}/`, {
+				params: {
+					id: myId,
+				},
+			})
+			.then(user => {
+				dispatch({
+					type: "OTHER_USERS_INFO",
+					payload: { ...user.data[0].fields, id: user.data[0].pk },
+				});
 			});
-		});
+	};
+};
+
+export const follow = (myId, hisId) => {
+	return function(dispatch) {
+		backend
+			.post("/users/follow", {
+				myId,
+				hisId,
+				follow: true,
+			})
+			.then(
+				r => {
+					dispatch({
+						type: "FOLLOW",
+						payload: { success: true, message: r.data },
+					});
+					dispatch(fetchUserAndFollowingState(myId, hisId));
+				},
+				e => {
+					dispatch({
+						type: "FOLLOW",
+						payload: { success: false, message: e.data },
+					});
+				},
+			);
+	};
+};
+
+export const unfollow = (myId, hisId) => {
+	return function(dispatch) {
+		backend
+			.post("/users/follow", {
+				myId,
+				hisId,
+				follow: false,
+			})
+			.then(
+				r => {
+					dispatch({
+						type: "UNFOLLOW",
+						payload: { success: true, message: r.data },
+					});
+					dispatch(fetchUserAndFollowingState(myId, hisId));
+				},
+				e => {
+					dispatch({
+						type: "UNFOLLOW",
+						payload: { success: false, message: e.data },
+					});
+				},
+			);
 	};
 };
