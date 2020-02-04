@@ -29,12 +29,16 @@ class User(models.Model):
     def __str__(self):
         return self.full_name
 
+    class META:
+        fields=('first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels')
+
 
 class UserRelation(models.Model):
     follower = models.ForeignKey(
         'User', related_name='follower', on_delete=models.CASCADE)
     followed = models.ForeignKey(
         'User', on_delete=models.CASCADE, related_name='followed')
+
     class Meta:
         unique_together = ('follower', 'followed',)
 
@@ -55,12 +59,12 @@ class Post(models.Model):
     dislikes = models.IntegerField(default=0)
     comments = models.ManyToManyField('Comment')
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     replies = models.ManyToManyField('self', related_name='comment_replies')
     text = models.TextField()
 
-    def __str__(self):
-        return self.title
-    

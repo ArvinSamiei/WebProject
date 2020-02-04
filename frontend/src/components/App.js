@@ -8,6 +8,7 @@ import Signup from "./Signup";
 import Profile from "./Profile";
 import CreatePost from "./posts/CreatePost";
 import OthersProfile from './OthersProfile'
+import ChangePassword from './ChangePassword'
 
 
 export default class App extends Component {
@@ -26,6 +27,15 @@ export default class App extends Component {
 							render={(props) => (
 								<div>
 									<OthersProfile id={props.match.params.id} />
+								</div>
+							)}
+						/>
+						<Route
+							exact
+							path="/changePassword"
+							render={() => (
+								<div>
+									<ChangePassword  />
 								</div>
 							)}
 						/>

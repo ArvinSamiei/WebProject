@@ -266,3 +266,28 @@ export const unfollow = (myId, hisId) => {
 			);
 	};
 };
+
+export const changePassword = (id, oldPassword, newPassword) => {
+	return function(dispatch) {
+		backend
+		.post("/users/changePassword", {
+			id,
+			oldPassword,
+			newPassword,
+		})
+		.then(
+			r => {
+				dispatch({
+					type: "CHANGE_PASSWORD",
+					payload: { success: true, message: r.data },
+				});
+			},
+			e => {
+				dispatch({
+					type: "CHANGE_PASSWORD",
+					payload: { success: false, message: e.data },
+				});
+			},
+		);
+	}
+};

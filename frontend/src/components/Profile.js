@@ -34,6 +34,9 @@ export class Profile extends Component {
 					<Link style={{marginTop: '10px'}} to="/">
 						View Following Posts
 					</Link>
+					<Link style={{marginTop: '10px'}} to="/changePassword">
+						Change Password
+					</Link>
 				</p>
 			</div>
 		);

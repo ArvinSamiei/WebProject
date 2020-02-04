@@ -6,8 +6,9 @@ import createPost from "./createPost";
 import fetchAllPosts from "./fetchAllPosts";
 import otherUserInfo from "./otherUserInfo";
 import otherUserFollowing from "./otherUserFollowing";
-import follow from './follow'
-import unfollow from './unfollow'
+import follow from "./follow";
+import unfollow from "./unfollow";
+import changePassword from "./changePassword";
 export default combineReducers({
 	login: loginReducer,
 	signup: signupReducer,
@@ -17,5 +18,6 @@ export default combineReducers({
 	otherUserFollowing,
 	otherUserInfo,
 	follow,
-	unfollow
+	unfollow,
+	changePassword,
 });
