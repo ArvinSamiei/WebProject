@@ -19,6 +19,7 @@ export class Header extends Component {
 						to="/login"
 						onClick={e => {
 							e.stopPropagation();
+							
 						}}
 					>
 						Login
@@ -93,6 +94,7 @@ export class Header extends Component {
 							e.stopPropagation();
 							localStorage.removeItem("username")
 							this.props.logout();
+							window.location.href='/login'
 						}}
 					>
 						Logout

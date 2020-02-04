@@ -15,6 +15,7 @@ urlpatterns = [
     path('images/posts/<int:post_id>', views.download_image_post),
     path('users/othersProfile/<int:id>', views.others_profile),
     path('users/follow', views.follow),
-    path('users/changePassword', views.changePassword)
+    path('users/changePassword', views.changePassword),
+    path('users/changeAccount', views.changeAccount)
     
 ]

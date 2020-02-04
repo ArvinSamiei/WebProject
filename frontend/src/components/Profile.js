@@ -37,6 +37,9 @@ export class Profile extends Component {
 					<Link style={{marginTop: '10px'}} to="/changePassword">
 						Change Password
 					</Link>
+					<Link style={{marginTop: '10px'}} to="/changeAccount">
+						Change Account
+					</Link>
 				</p>
 			</div>
 		);

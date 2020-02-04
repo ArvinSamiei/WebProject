@@ -32,7 +32,7 @@ def login(request):
         user = queryset[0]
         user.last_login = timezone.now()
         user.save()
-        return Response({'message': 'Login Successful'}, status=status.HTTP_200_OK, headers={
+        return Response({'message': 'Login Successful', 'id': user.id}, status=status.HTTP_200_OK, headers={
             'Set-Cookie': 'id=' + str(user.id),
             'Access-Control-Expose-Headers': '*'
         })
@@ -238,3 +238,24 @@ def changePassword(request):
         return Response('Your Password Changed Successfully')
     else:
         return Response('Password Incorrect', status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser])
+@csrf_exempt
+def changeAccount(request):
+    image = request.data['image']
+    id = request.data['id']
+    name = request.data['name']
+    lastname = request.data['lastname']
+    email = request.data['email']
+    user = User.objects.get(pk=id)
+    if name != '':
+        user.first_name = name
+    if lastname != '':
+        user.last_name = lastname
+    if email != '':
+        user.email = email
+    if image != 'undefined':
+        user.image = image
+    user.save()
+    return Response('Account Successfully Changed!')

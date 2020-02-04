@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { fetchUser, changePassword } from "../actions";
+import {Link} from 'react-router-dom'
 
 export class ChangePassword extends Component {
 	state = {
@@ -110,6 +111,16 @@ export class ChangePassword extends Component {
 						<button type="submit" className="btn btn-primary">
 							Submit
 						</button>
+                        <Link
+							style={{ marginLeft: "10px" }}
+							className="row btn btn-primary"
+							to="/profile"
+							onClick={e => {
+								e.stopPropagation();
+							}}
+						>
+							Back
+						</Link>
 					</form>
 				</div>
 			</div>

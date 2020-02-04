@@ -9,6 +9,7 @@ import Profile from "./Profile";
 import CreatePost from "./posts/CreatePost";
 import OthersProfile from './OthersProfile'
 import ChangePassword from './ChangePassword'
+import ChangeAccount from './ChangeAccount'
 
 
 export default class App extends Component {
@@ -36,6 +37,15 @@ export default class App extends Component {
 							render={() => (
 								<div>
 									<ChangePassword  />
+								</div>
+							)}
+						/>
+						<Route
+							exact
+							path="/changeAccount"
+							render={() => (
+								<div>
+									<ChangeAccount  />
 								</div>
 							)}
 						/>

@@ -15,8 +15,10 @@ export const login = (username, password) => {
 						document.cookie = `username=${username}`;
 						dispatch({
 							type: "LOGIN",
-							payload: { success: true, message: r.message },
+							payload: { success: true, message: r.data.message },
 						});
+						console.log(r)
+						dispatch(fetchPosts(r.data.id, 'Following'))
 					}
 				},
 				e => {
@@ -87,6 +89,7 @@ export const logout = () => {
 		document.cookie =
 			"username=username; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		dispatch({ type: "LOGOUT" });
+		
 	};
 };
 
@@ -270,24 +273,52 @@ export const unfollow = (myId, hisId) => {
 export const changePassword = (id, oldPassword, newPassword) => {
 	return function(dispatch) {
 		backend
-		.post("/users/changePassword", {
-			id,
-			oldPassword,
-			newPassword,
-		})
-		.then(
-			r => {
-				dispatch({
-					type: "CHANGE_PASSWORD",
-					payload: { success: true, message: r.data },
-				});
-			},
-			e => {
-				dispatch({
-					type: "CHANGE_PASSWORD",
-					payload: { success: false, message: e.data },
-				});
-			},
-		);
-	}
+			.post("/users/changePassword", {
+				id,
+				oldPassword,
+				newPassword,
+			})
+			.then(
+				r => {
+					dispatch({
+						type: "CHANGE_PASSWORD",
+						payload: { success: true, message: r.data },
+					});
+				},
+				e => {
+					dispatch({
+						type: "CHANGE_PASSWORD",
+						payload: { success: false, message: e.data },
+					});
+				},
+			);
+	};
+};
+
+export const changeAccount = (id, name, lastname, email, picture, username) => {
+	return function(dispatch) {
+		var formData = new FormData();
+
+		formData.append("image", picture[0]);
+		formData.append("id", id);
+		formData.append("name", name);
+		formData.append("lastname", lastname);
+		formData.append("email", email);
+		backend
+			.post("/users/changeAccount", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then(
+				r => {
+					dispatch({ type: "CHANGE_ACCOUNT", payload: { success: true, message: r.data } });
+					dispatch(fetchUser(username))
+					document.location.reload(true)
+				},
+				e => {
+					dispatch({ type: "CHANGE_ACCOUNT", payload: { success: false, message: e.data } });
+				},
+			);
+	};
 };

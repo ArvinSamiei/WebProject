@@ -39,7 +39,7 @@ class CreatePost extends Component {
 
 	render() {
 		return (
-			<div class="container">
+			<div className="container">
 				<form onSubmit={this.handleSubmit}>
 					<div className="form-group">
 						<label htmlFor="title">Title</label>
@@ -69,7 +69,7 @@ class CreatePost extends Component {
 						maxFileSize={5242880}
 						singleImage={true}
 					/>
-					<div class="container">
+					<div className="container">
 						<button type="row submit" className="btn btn-primary">
 							Submit
 						</button>

@@ -9,6 +9,8 @@ import otherUserFollowing from "./otherUserFollowing";
 import follow from "./follow";
 import unfollow from "./unfollow";
 import changePassword from "./changePassword";
+import changeAccount from './changeAccount'
+
 export default combineReducers({
 	login: loginReducer,
 	signup: signupReducer,
@@ -20,4 +22,5 @@ export default combineReducers({
 	follow,
 	unfollow,
 	changePassword,
+	changeAccount
 });
