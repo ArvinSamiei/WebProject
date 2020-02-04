@@ -7,10 +7,9 @@ import PrivateRoute from "./PrivateRoute";
 import Signup from "./Signup";
 import Profile from "./Profile";
 import CreatePost from "./posts/CreatePost";
-import OthersProfile from './OthersProfile'
-import ChangePassword from './ChangePassword'
-import ChangeAccount from './ChangeAccount'
-
+import OthersProfile from "./OthersProfile";
+import ChangePassword from "./ChangePassword";
+import ChangeAccount from "./ChangeAccount";
 
 export default class App extends Component {
 	render() {
@@ -25,7 +24,7 @@ export default class App extends Component {
 						<Route
 							exact
 							path="/profile/:id"
-							render={(props) => (
+							render={props => (
 								<div>
 									<OthersProfile id={props.match.params.id} />
 								</div>
@@ -36,7 +35,7 @@ export default class App extends Component {
 							path="/changePassword"
 							render={() => (
 								<div>
-									<ChangePassword  />
+									<ChangePassword />
 								</div>
 							)}
 						/>
@@ -45,7 +44,7 @@ export default class App extends Component {
 							path="/changeAccount"
 							render={() => (
 								<div>
-									<ChangeAccount  />
+									<ChangeAccount />
 								</div>
 							)}
 						/>

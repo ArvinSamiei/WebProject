@@ -17,11 +17,13 @@ from django.utils import timezone
 from django.core import serializers
 from django.db.models import Q
 from datetime import timedelta
+import datetime
 
 
 @api_view(['POST'])
 @csrf_exempt
 def login(request):
+    print(request.headers)
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     username = body['username']
@@ -33,8 +35,9 @@ def login(request):
         user.last_login = timezone.now()
         user.save()
         return Response({'message': 'Login Successful', 'id': user.id}, status=status.HTTP_200_OK, headers={
-            'Set-Cookie': 'id=' + str(user.id),
-            'Access-Control-Expose-Headers': '*'
+            'Set-Cookie': 'id=' + str(user.id)+'; Path=/; Expires='+datetime.datetime.strftime(datetime.datetime.utcnow() + datetime.timedelta(days=7), "%a, %d-%b-%Y %H:%M:%S GMT")+'; Domain=127.0.0.1',
+            'Access-Control-Expose-Headers': '*',
+            'Access-Control-Allow-Credentials': True
         })
     else:
         return Response({'message': 'Login Failed'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -57,7 +60,7 @@ def signup(request):
         if 'unique constraint' in e.message:
             return Response('You Have Already SignedUp', status=status.HTTP_400_BAD_REQUEST)
     return Response('SignUp Succesful', status=status.HTTP_200_OK, headers={
-        'Set-Cookie': 'id='+str(user.id),
+        'Set-Cookie': 'id=' + str(user.id)+'; Expires='+datetime.datetime.strftime(datetime.datetime.utcnow() + datetime.timedelta(days=7), "%a, %d-%b-%Y %H:%M:%S GMT")+'; Domain=127.0.0.1',
         'Access-Control-Expose-Headers': '*'
     })
 
@@ -97,12 +100,14 @@ def download_image2(request, user_id):
             return HttpResponse(f.read(), content_type="image/jpeg")
 
 def send_profile(request, username):
+    print(request.headers)
     user = User.objects.filter(username=username)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))
     return HttpResponse(product, )
 
 def fetch_user(request, user_id):
+    print(request.headers)
     user = User.objects.filter(pk=user_id)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))

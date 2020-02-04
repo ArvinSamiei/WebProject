@@ -10,7 +10,7 @@ export class Header extends Component {
 		if (
 			!this.props.isLoggedIn &&
 			!this.props.isSignedup &&
-			!localStorage.getItem("username")
+			!document.cookie
 		) {
 			return (
 				<li className="nav-item">
@@ -35,7 +35,7 @@ export class Header extends Component {
 		if (
 			!this.props.isLoggedIn &&
 			!this.props.isSignedup &&
-			!localStorage.getItem("username")
+			!document.cookie
 		) {
 			return (
 				<li className="nav-item">
@@ -60,7 +60,7 @@ export class Header extends Component {
 			!(
 				!this.props.isLoggedIn &&
 				!this.props.isSignedup &&
-				!localStorage.getItem("username")
+				!document.cookie
 			)
 		) {
 			return (
@@ -83,7 +83,7 @@ export class Header extends Component {
 
 	renderLogout = () => {
 		if (
-			!(!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem("username"))
+			!(!this.props.isLoggedIn && !this.props.isSignedup && !document.cookie)
 		) {
 			return (
 				<li className="nav-item">

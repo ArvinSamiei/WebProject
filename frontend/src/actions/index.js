@@ -12,13 +12,13 @@ export const login = (username, password) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						document.cookie = `username=${username}`;
+						// document.cookie = `username=${username}`;
 						dispatch({
 							type: "LOGIN",
 							payload: { success: true, message: r.data.message },
 						});
-						console.log(r)
-						dispatch(fetchPosts(r.data.id, 'Following'))
+						console.log(r);
+						dispatch(fetchPosts(r.data.id, "Following"));
 					}
 				},
 				e => {
@@ -46,7 +46,7 @@ export const signup = (username, password, email, lastname, name, picture) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						document.cookie = `username=${username}`;
+						// document.cookie = `username=${username}`;
 						setTimeout(() => {
 							localStorage.removeItem();
 						});
@@ -76,7 +76,7 @@ export const changeImage = (picture, username) => {
 		backend.post("users/uploadImage/", formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
-				Cookie: document.cookie,
+				// Cookie: document.cookie,
 			},
 		});
 	};
@@ -87,17 +87,20 @@ export const logout = () => {
 		localStorage.removeItem("username");
 		localStorage.removeItem("time");
 		document.cookie =
-			"username=username; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			"id=id; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		dispatch({ type: "LOGOUT" });
-		
 	};
 };
 
 export const fetchUser = username => {
 	return function(dispatch) {
 		backend
-			.get(`/users/profile/${username}`, { username: username })
+			.get(`/users/profile/${username}`, {
+				username: username,
+				withCredentials: true,
+			})
 			.then(r => {
+				console.log(r);
 				dispatch({
 					type: "USER_PROFILE",
 					payload: { ...r.data[0].fields, id: r.data[0].pk },
@@ -128,7 +131,7 @@ export const createPost = (id, title, text, type, image) => {
 			.post("posts/createPost/", formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
-					Cookie: document.cookie,
+					// Cookie: document.cookie,
 				},
 			})
 			.then(
@@ -312,12 +315,18 @@ export const changeAccount = (id, name, lastname, email, picture, username) => {
 			})
 			.then(
 				r => {
-					dispatch({ type: "CHANGE_ACCOUNT", payload: { success: true, message: r.data } });
-					dispatch(fetchUser(username))
-					document.location.reload(true)
+					dispatch({
+						type: "CHANGE_ACCOUNT",
+						payload: { success: true, message: r.data },
+					});
+					dispatch(fetchUser(username));
+					document.location.reload(true);
 				},
 				e => {
-					dispatch({ type: "CHANGE_ACCOUNT", payload: { success: false, message: e.data } });
+					dispatch({
+						type: "CHANGE_ACCOUNT",
+						payload: { success: false, message: e.data },
+					});
 				},
 			);
 	};
