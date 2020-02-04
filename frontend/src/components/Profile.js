@@ -31,6 +31,9 @@ export class Profile extends Component {
 					<Link to="/createPost">
 						Create Post
 					</Link>
+					<Link style={{marginTop: '10px'}} to="/">
+						View Following Posts
+					</Link>
 				</p>
 			</div>
 		);
