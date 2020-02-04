@@ -82,7 +82,7 @@ export class Header extends Component {
 
 	renderLogout = () => {
 		if (
-			!(!this.props.isLoggedIn && !this.props.isSignedup && !document.cookie)
+			!(!this.props.isLoggedIn && !this.props.isSignedup && !localStorage.getItem("username"))
 		) {
 			return (
 				<li className="nav-item">
@@ -91,6 +91,7 @@ export class Header extends Component {
 						to="/login"
 						onClick={e => {
 							e.stopPropagation();
+							localStorage.removeItem("username")
 							this.props.logout();
 						}}
 					>
