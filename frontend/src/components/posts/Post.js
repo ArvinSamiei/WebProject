@@ -52,7 +52,7 @@ class Post extends React.Component {
 							__html: this.props.post.text,
 						}}
 					></p>
-					<a href="#" className="btn btn-primary">
+					<a href="#" className="btn btn-primary" style={{backgroundColor: 'blue'}}>
 						View
 					</a>
 				</div>

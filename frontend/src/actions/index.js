@@ -230,9 +230,10 @@ export const follow = (myId, hisId) => {
 					dispatch(fetchUserAndFollowingState(myId, hisId));
 				},
 				e => {
+					console.log(e);
 					dispatch({
 						type: "FOLLOW",
-						payload: { success: false, message: e.data },
+						payload: { success: false, message: e },
 					});
 				},
 			);
@@ -256,6 +257,7 @@ export const unfollow = (myId, hisId) => {
 					dispatch(fetchUserAndFollowingState(myId, hisId));
 				},
 				e => {
+					console.log(e);
 					dispatch({
 						type: "UNFOLLOW",
 						payload: { success: false, message: e.data },

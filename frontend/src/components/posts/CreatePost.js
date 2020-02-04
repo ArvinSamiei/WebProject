@@ -69,19 +69,22 @@ class CreatePost extends Component {
 						maxFileSize={5242880}
 						singleImage={true}
 					/>
-					<button type="submit" className="btn btn-primary">
-						Submit
-					</button>
-					<Link
-                        style={{marginLeft: '10px'}}
-						className="btn btn-primary"
-						to="/profile"
-						onClick={e => {
-							e.stopPropagation();
-						}}
-					>
-						Back
-					</Link>
+					<div class="container">
+						<button type="row submit" className="btn btn-primary">
+							Submit
+						</button>
+
+						<Link
+							style={{ marginLeft: "10px" }}
+							className="row btn btn-primary"
+							to="/profile"
+							onClick={e => {
+								e.stopPropagation();
+							}}
+						>
+							Back
+						</Link>
+					</div>
 				</form>
 			</div>
 		);

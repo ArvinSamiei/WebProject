@@ -22,18 +22,32 @@ export class Profile extends Component {
 		}
 	};
 
+	renderButton = () => {
+		if (this.props.user.id == this.props.id) {
+			return (
+				<p>
+					<Link to="/createPost">Create Post</Link>
+				</p>
+			);
+		} else {
+			return (
+				<button className="follow" onClick={this.handleClick}>
+					{this.renderButtonText()}
+				</button>
+			);
+		}
+	};
+
 	handleClick = () => {
-		
 		if (!this.props.otherUserFollowing.follow) {
-            this.setState({ triedFollow: true });
-            this.setState({ triedUnfollow: false });
+			this.setState({ triedFollow: true });
+			this.setState({ triedUnfollow: false });
 			this.props.follow(this.props.user.id, this.props.id);
-        }
-        else {
-            this.setState({ triedUnfollow: true });
-            this.setState({ triedFollow: false });
-            this.props.unfollow(this.props.user.id, this.props.id)
-        }
+		} else {
+			this.setState({ triedUnfollow: true });
+			this.setState({ triedFollow: false });
+			this.props.unfollow(this.props.user.id, this.props.id);
+		}
 	};
 
 	renderText = () => {
@@ -46,19 +60,25 @@ export class Profile extends Component {
 					{this.props.follow.message}
 				</div>
 			);
-		} else if(this.props.followState.success && this.state.triedFollow){
-			return <div className="p-3 mb-2 bg-success text-white">{this.props.followState.message}</div>;
-        }
-        else if(!this.props.unfollowState.success && this.state.triedUnfollow){
-            return (
+		} else if (this.props.followState.success && this.state.triedFollow) {
+			return (
+				<div className="p-3 mb-2 bg-success text-white">
+					{this.props.followState.message}
+				</div>
+			);
+		} else if (!this.props.unfollowState.success && this.state.triedUnfollow) {
+			return (
 				<div className="p-3 mb-2 bg-danger text-white">
 					{this.props.unfollowState.message}
 				</div>
 			);
-        }
-        else if(this.props.unfollowState.success && this.state.triedUnfollow){
-            return <div className="p-3 mb-2 bg-success text-white">{this.props.unfollowState.message}</div>;
-        }
+		} else if (this.props.unfollowState.success && this.state.triedUnfollow) {
+			return (
+				<div className="p-3 mb-2 bg-success text-white">
+					{this.props.unfollowState.message}
+				</div>
+			);
+		}
 	};
 
 	render() {
@@ -81,11 +101,7 @@ export class Profile extends Component {
 						{this.props.otherUser.email}
 						<br />
 					</p>
-					<p>
-						<button className="follow" onClick={this.handleClick}>
-							{this.renderButtonText()}
-						</button>
-					</p>
+					<p>{this.renderButton()}</p>
 				</div>
 			</div>
 		);
@@ -97,14 +113,14 @@ const mapStateToProps = state => {
 		user: state.user,
 		otherUser: state.otherUserInfo,
 		otherUserFollowing: state.otherUserFollowing,
-        followState: state.follow,
-        unfollowState: state.unfollow,
+		followState: state.follow,
+		unfollowState: state.unfollow,
 	};
 };
 
 export default connect(mapStateToProps, {
 	fetchUser,
 	fetchUserAndFollowingState,
-    follow,
-    unfollow
+	follow,
+	unfollow,
 })(Profile);
