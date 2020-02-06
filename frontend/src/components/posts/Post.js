@@ -33,7 +33,7 @@ class Post extends React.Component {
 				</div>
 				<div className="card-body">
 					{this.renderImageOfPost()}
-					<Link className="btn btn-outline-secondary" style={{backgroundColor: 'grey'}} to={`profile/${user.id}`}>
+					<Link className="btn btn-info" to={`profile/${user.id}`}>
 						By: {user.first_name + " " + user.last_name}
 					</Link>
 					<h5 className="card-title">{this.props.post.fields.title}</h5>

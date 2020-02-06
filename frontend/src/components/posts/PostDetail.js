@@ -6,6 +6,9 @@ import {
 	addComment,
 	like,
 	dislike,
+	fetchUser,
+	deleteComment,
+	editComment
 } from "../../actions";
 import "./PostDetail.css";
 import { Link } from "react-router-dom";
@@ -31,6 +34,7 @@ export class PostDetail extends Component {
 		fromPost: false,
 		caller: 0,
 		text: "",
+		edit: false
 	};
 	forPost = true;
 
@@ -57,6 +61,7 @@ export class PostDetail extends Component {
 	componentDidMount() {
 		this._isMounted = true;
 		this.props.fetchPostDetail(this.props.id);
+		this.props.fetchUser(localStorage.getItem("username"));
 
 		this.interval = setInterval(() => {
 			this.setState({ dummy: "" + "q" });
@@ -91,6 +96,9 @@ export class PostDetail extends Component {
 						marginLeft: "50px",
 						borderRadius: "10px",
 						marginBottom: "10px",
+						borderBottom: "1px solid",
+						marginTop: "10px",
+						borderLeft: "1px solid",
 					}}
 				>
 					<li className="media">
@@ -99,7 +107,7 @@ export class PostDetail extends Component {
 							to={`/profile/${data["1"][i]["0"].creator}`}
 						>
 							<img
-								style={{ width: "50px" }}
+								style={{ width: "30px" }}
 								className="media-object img-circle"
 								src={`http://127.0.0.1:8000/users/images/${data["1"][i]["0"].creator}`}
 								alt="profile"
@@ -111,19 +119,22 @@ export class PostDetail extends Component {
 									{user.first_name + " " + user.last_name}{" "}
 								</h4>
 								<p className="media-comment">{data["1"][i]["0"].text}</p>
-								<a
-									className="btn btn-info btn-circle text-uppercase"
+								<button
+									className="btn btn-success"
 									onClick={e => {
 										this.setState({
 											fromPost: false,
 											caller: data["1"][i]["0"].id,
+											edit: false
 										});
 										this.openModal();
 									}}
 									id="reply"
 								>
-									<span className="glyphicon glyphicon-share-alt"></span> Reply
-								</a>
+									Reply
+								</button>
+								{this.renderDeleteButton(data["1"][i]["0"])}
+								{this.renderEditButton(data["1"][i]["0"])}
 							</div>
 						</div>
 						{/* <div style={{ textIndent: "10px", marginLeft: "50px"  }}>
@@ -154,6 +165,47 @@ export class PostDetail extends Component {
 		} else return null;
 	};
 
+	renderDeleteButton = comment => {
+		if (this.props.user.id == comment.creator) {
+			return (
+				<button
+					style={{ marginLeft: "10px" }}
+					className="btn btn-danger"
+					onClick={e => {
+						this.props.deleteComment(comment.id, this.props.postDetail["0"].id);
+					}}
+				>
+					Delete
+				</button>
+			);
+		} else {
+			return null;
+		}
+	};
+
+	renderEditButton = comment => {
+		if (this.props.user.id == comment.creator) {
+			return (
+				<button
+					onClick={e => {
+						this.setState({
+							fromPost: false,
+							caller: comment.id,
+							edit: true
+						});
+						this.openModal();
+					}}
+					style={{ marginLeft: "10px" }}
+					className="btn btn-primary"
+				>
+					Edit
+				</button>
+			);
+		} else {
+			return null;
+		}
+	};
+
 	renderComments = () => {
 		console.log("kojayiiiiii pa");
 		console.log(this.props.postDetail["1"].length);
@@ -169,7 +221,13 @@ export class PostDetail extends Component {
 
 			result.push(
 				<div
-					style={{ borderRadius: "10px", width: "100vw", marginBottom: "10px" }}
+					style={{
+						borderRadius: "10px",
+						width: "100vw",
+						marginBottom: "10px",
+						marginTop: "10px",
+						borderLeft: "1px solid",
+					}}
 				>
 					<li className="media">
 						<Link
@@ -191,19 +249,22 @@ export class PostDetail extends Component {
 								<p className="media-comment">
 									{this.props.postDetail["1"][i]["0"].text}
 								</p>
-								<a
-									className="btn btn-info btn-circle text-uppercase"
+								<button
+									className="btn btn-success"
 									onClick={e => {
 										this.setState({
 											fromPost: false,
+											edit: false,
 											caller: this.props.postDetail["1"][i]["0"].id,
 										});
 										this.openModal();
 									}}
 									id="reply"
 								>
-									<span className="glyphicon glyphicon-share-alt"></span> Reply
-								</a>
+									Reply
+								</button>
+								{this.renderDeleteButton(this.props.postDetail["1"][i]["0"])}
+								{this.renderEditButton(this.props.postDetail["1"][i]["0"])}
 							</div>
 						</div>
 						{/* <div style={{ textIndent: "10px", marginLeft: "50px"  }}>
@@ -248,6 +309,9 @@ export class PostDetail extends Component {
 
 	handleSubmit = () => {
 		console.log("sakam");
+		if (this.state.edit){
+			this.props.editComment(this.state.caller, this.props.postDetail["0"].id, this.state.text)
+		}
 		this.props.addComment(
 			this.props.postDetail["0"].id,
 			this.state.caller,
@@ -296,12 +360,12 @@ export class PostDetail extends Component {
 						onClick={e => {
 							this.props.like(this.props.postDetail["0"].id);
 						}}
-						style={{ width: "40px", cursor: 'pointer' }}
+						style={{ width: "40px", cursor: "pointer" }}
 						src="https://img.icons8.com/color/48/000000/filled-like.png"
 					/>
 					{this.props.postDetail["0"].likes}
 					<img
-						style={{ width: "40px", cursor: 'pointer' }}
+						style={{ width: "40px", cursor: "pointer" }}
 						src="https://img.icons8.com/color/64/000000/dislike.png"
 						onClick={e => {
 							this.props.dislike(this.props.postDetail["0"].id);
@@ -323,6 +387,7 @@ export class PostDetail extends Component {
 					onClick={e => {
 						this.setState({
 							fromPost: true,
+							edit: false,
 							caller: this.props.postDetail["0"].id,
 						});
 						this.openModal();
@@ -380,6 +445,7 @@ const mapStateToProps = state => {
 	return {
 		postDetail: state.fetchPostDetail,
 		userById: state.userById,
+		user: state.user,
 	};
 };
 
@@ -389,4 +455,7 @@ export default connect(mapStateToProps, {
 	addComment,
 	like,
 	dislike,
+	fetchUser,
+	deleteComment,
+	editComment
 })(PostDetail);

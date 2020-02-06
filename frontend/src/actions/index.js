@@ -48,7 +48,7 @@ export const signup = (username, password, email, lastname, name, picture) => {
 						localStorage.setItem("time", Date.now());
 						// document.cookie = `username=${username}`;
 						setTimeout(() => {
-							localStorage.removeItem();
+							localStorage.removeItem("username");
 						});
 						dispatch({
 							type: "SIGNUP",
@@ -432,7 +432,7 @@ export const like = postId => {
 			})
 			.then(r => {
 				console.log(r);
-				dispatch(fetchPostDetail(postId))
+				dispatch(fetchPostDetail(postId));
 			});
 	};
 };
@@ -445,7 +445,48 @@ export const dislike = postId => {
 			})
 			.then(r => {
 				console.log(r);
-				dispatch(fetchPostDetail(postId))
+				dispatch(fetchPostDetail(postId));
 			});
+	};
+};
+
+export const deleteComment = (commentId, postId) => {
+	return function(dispatch) {
+		backend
+			.post("comments/delete/", {
+				commentId,
+			})
+			.then(r => {
+				dispatch(fetchPostDetail(postId));
+			});
+	};
+};
+
+export const editComment = (commentId, postId, text) => {
+	return function(dispatch) {
+		backend
+			.post("comments/edit/", {
+				commentId,
+				text,
+			})
+			.then(r => {
+				dispatch(fetchPostDetail(postId));
+			});
+	};
+};
+
+export const fetchFollowers = userId => {
+	return function(dispatch) {
+		backend.get(`users/${userId}/followers`).then(r => {
+			dispatch({type: "FOLLOWERS", payload: r.data })
+		});
+	};
+};
+
+export const fetchFollowings = userId => {
+	return function(dispatch) {
+		backend.get(`users/${userId}/followings`).then(r => {
+			dispatch({type: "FOLLOWINGS", payload: r.data })
+		});
 	};
 };

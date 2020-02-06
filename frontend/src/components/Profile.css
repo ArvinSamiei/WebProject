@@ -10,8 +10,8 @@
 	font-size: 18px;
 }
 
-div.card a {
-	border: none;
+.linke {
+	border: solid white;
 	outline: 0;
 	display: inline-block;
 	padding: 8px;
@@ -43,4 +43,8 @@ button.follow {
 
 a:hover {
 	opacity: 0.7;
+}
+.profile {
+	display: grid;
+	grid-template-columns: 1fr 6fr;
 }

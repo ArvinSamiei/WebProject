@@ -363,3 +363,46 @@ def dislike(request):
     post.dislikes += 1
     post.save()
     return HttpResponse('done')
+
+@csrf_exempt
+def edit_comment(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    commentId = body['commentId']
+    text = body['text']
+    comment = Comment.objects.get(pk=commentId)
+    comment.text = text
+    comment.save()
+    return HttpResponse('Comment Edited')
+
+@csrf_exempt
+def delete_comment(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    commentId = body['commentId']
+    comment = Comment.objects.get(pk=commentId)
+    comment.delete()
+    return HttpResponse('Comment Deleted')
+
+def fetch_followers(request, user_id):
+    user = User.objects.get(pk=user_id)
+    followings = []
+    followingUsers = UserRelation.objects.filter(followed=user).all()
+    for relation in followingUsers:
+        followingPerson = User.objects.get(pk=relation.follower.id)
+        followings.append(followingPerson)
+    data = serializers.serialize('json', followings)
+    return HttpResponse(data)
+
+def fetch_followings(request, user_id):
+    user = User.objects.get(pk=user_id)
+    followings = []
+    followingUsers = UserRelation.objects.filter(follower=user).all()
+    for relation in followingUsers:
+        followingPerson = User.objects.get(pk=relation.followed.id)
+        followings.append(followingPerson)
+    # followings.append(*(user.followingChannels.all()))
+    for channel in user.followingChannels.all():
+        followings.append(channel)
+    data = serializers.serialize('json', followings)
+    return HttpResponse(data)

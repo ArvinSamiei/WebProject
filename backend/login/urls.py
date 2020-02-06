@@ -3,6 +3,11 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
+    path('comments/add/', views.add_comment),
+    path('comments/edit/', views.edit_comment),
+    path('comments/delete/', views.delete_comment),
+    path('posts/like', views.like),
+    path('posts/dislike', views.dislike),
     path('users/login/', views.login),
     path('users/signup/', views.signup),
     path('users/uploadImage/', views.uploadImage),
@@ -21,8 +26,8 @@ urlpatterns = [
     path('posts/detail/', views.fetch_post_detail),
     path('posts/<int:post_id>', views.fetch_post),
     path('comments/<int:comment_id>', views.fetch_comment),
-    path('comments/add/', views.add_comment),
-    path('posts/like', views.like),
-    path('posts/dislike', views.dislike)
+    path('users/<int:user_id>/followers', views.fetch_followers),
+    path('users/<int:user_id>/followings', views.fetch_followings)
+    
 
 ]
