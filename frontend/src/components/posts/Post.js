@@ -7,7 +7,7 @@ class Post extends React.Component {
 			return (
 				<img
 					src={`http://localhost:8000/images/posts/${this.props.post.pk}`}
-					style={{ width: "350px" }}
+					style={{ width: "250px" }}
 				></img>
 			);
 		} else return null;

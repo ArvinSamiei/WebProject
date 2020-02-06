@@ -21,6 +21,8 @@ urlpatterns = [
     path('posts/detail/', views.fetch_post_detail),
     path('posts/<int:post_id>', views.fetch_post),
     path('comments/<int:comment_id>', views.fetch_comment),
-    path('comments/add/', views.add_comment)
+    path('comments/add/', views.add_comment),
+    path('posts/like', views.like),
+    path('posts/dislike', views.dislike)
 
 ]

@@ -423,3 +423,29 @@ export const addComment = (postId, parentId, fromPost, myId, text) => {
 			});
 	};
 };
+
+export const like = postId => {
+	return function(dispatch) {
+		backend
+			.post("posts/like", {
+				postId,
+			})
+			.then(r => {
+				console.log(r);
+				dispatch(fetchPostDetail(postId))
+			});
+	};
+};
+
+export const dislike = postId => {
+	return function(dispatch) {
+		backend
+			.post("posts/dislike", {
+				postId,
+			})
+			.then(r => {
+				console.log(r);
+				dispatch(fetchPostDetail(postId))
+			});
+	};
+};

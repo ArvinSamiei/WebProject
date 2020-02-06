@@ -153,11 +153,11 @@ def fetch_posts_following(id):
 
 def fetch_posts_newests():
     return Post.objects.all().order_by('-create_date')[:50]
-
+from django.db. models import F 
 def fetch_posts_breakings():
     # print(timezone.now().date() - timedelta(days=7))
     # print(Post.objects.get(pk=1).create_date)
-    return Post.objects.filter(create_date__gte=timezone.now() - timedelta(days=7)).order_by('-likes')[:20]
+    return Post.objects.filter(create_date__gte=timezone.now() - timedelta(days=7)).annotate(point=F('likes')-F('dislikes')).order_by('-point')[:20]
 
 def fetch_posts_participating(id):
     first = list(Post.objects.filter(creater_type=0).filter(creator_id=id))
@@ -342,3 +342,24 @@ def add_comment(request):
         comment.replies.add(newComment)
         comment.save()
     return Response('Added')
+@api_view(['POST'])
+@csrf_exempt
+def like(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    postId = body['postId']
+    post = Post.objects.get(pk=postId)
+    post.likes += 1
+    post.save()
+    return HttpResponse('done')
+
+@api_view(['POST'])
+@csrf_exempt
+def dislike(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    postId = body['postId']
+    post = Post.objects.get(pk=postId)
+    post.dislikes += 1
+    post.save()
+    return HttpResponse('done')

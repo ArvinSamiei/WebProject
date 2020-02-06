@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchPostDetail, fetchUserById, addComment } from "../../actions";
+import {
+	fetchPostDetail,
+	fetchUserById,
+	addComment,
+	like,
+	dislike,
+} from "../../actions";
 import "./PostDetail.css";
 import { Link } from "react-router-dom";
 import Modal from "react-modal";
@@ -286,6 +292,22 @@ export class PostDetail extends Component {
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
 					<p>{this.props.postDetail["0"].text}</p>
+					<img
+						onClick={e => {
+							this.props.like(this.props.postDetail["0"].id);
+						}}
+						style={{ width: "40px", cursor: 'pointer' }}
+						src="https://img.icons8.com/color/48/000000/filled-like.png"
+					/>
+					{this.props.postDetail["0"].likes}
+					<img
+						style={{ width: "40px", cursor: 'pointer' }}
+						src="https://img.icons8.com/color/64/000000/dislike.png"
+						onClick={e => {
+							this.props.dislike(this.props.postDetail["0"].id);
+						}}
+					/>
+					{this.props.postDetail["0"].dislikes}
 				</div>
 
 				<ul
@@ -365,4 +387,6 @@ export default connect(mapStateToProps, {
 	fetchPostDetail,
 	fetchUserById,
 	addComment,
+	like,
+	dislike,
 })(PostDetail);
