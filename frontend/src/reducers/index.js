@@ -10,6 +10,8 @@ import follow from "./follow";
 import unfollow from "./unfollow";
 import changePassword from "./changePassword";
 import changeAccount from './changeAccount'
+import fetchPostDetail from './fetchPostDetail'
+import userById from './fetchUserById'
 
 export default combineReducers({
 	login: loginReducer,
@@ -22,5 +24,7 @@ export default combineReducers({
 	follow,
 	unfollow,
 	changePassword,
-	changeAccount
+	changeAccount,
+	fetchPostDetail,
+	userById
 });

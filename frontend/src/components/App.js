@@ -10,6 +10,7 @@ import CreatePost from "./posts/CreatePost";
 import OthersProfile from "./OthersProfile";
 import ChangePassword from "./ChangePassword";
 import ChangeAccount from "./ChangeAccount";
+import PostDetail from './posts/PostDetail'
 
 export default class App extends Component {
 	render() {
@@ -21,12 +22,30 @@ export default class App extends Component {
 						<PrivateRoute exact path="/profile" component={Profile} />
 						<PrivateRoute exact path="/" component={PostList} />
 						<PrivateRoute path="/createPost" component={CreatePost} />
+						{/* <Route
+							exact
+							path="/"
+							render={ (props)=> (
+								<div>
+									<PostList {...props} />
+								</div>
+							)}
+						/> */}
 						<Route
 							exact
 							path="/profile/:id"
 							render={props => (
 								<div>
 									<OthersProfile id={props.match.params.id} />
+								</div>
+							)}
+						/>
+						<Route
+							exact
+							path="/post/:id"
+							render={props => (
+								<div>
+									<PostDetail id={props.match.params.id} />
 								</div>
 							)}
 						/>

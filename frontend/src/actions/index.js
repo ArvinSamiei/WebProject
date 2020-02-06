@@ -86,8 +86,7 @@ export const logout = () => {
 	return async function(dispatch) {
 		localStorage.removeItem("username");
 		localStorage.removeItem("time");
-		document.cookie =
-			"id=id; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		document.cookie = "id=id; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		dispatch({ type: "LOGOUT" });
 	};
 };
@@ -103,6 +102,22 @@ export const fetchUser = username => {
 				console.log(r);
 				dispatch({
 					type: "USER_PROFILE",
+					payload: { ...r.data[0].fields, id: r.data[0].pk },
+				});
+			});
+	};
+};
+export const fetchUserById = id => {
+	return function(dispatch) {
+		backend
+			.get(`/user/profile/${id}`, {
+				withCredentials: true,
+			})
+			.then(r => {
+				console.log("cheteeeee");
+				console.log(r);
+				dispatch({
+					type: "USER_PROFILE_BY_ID",
 					payload: { ...r.data[0].fields, id: r.data[0].pk },
 				});
 			});
@@ -266,7 +281,7 @@ export const unfollow = (myId, hisId) => {
 					console.log(e);
 					dispatch({
 						type: "UNFOLLOW",
-						payload: { success: false, message: e.data },
+						payload: { success: false, message: e.message },
 					});
 				},
 			);
@@ -289,9 +304,11 @@ export const changePassword = (id, oldPassword, newPassword) => {
 					});
 				},
 				e => {
+					console.log("heil");
+					console.log(e);
 					dispatch({
 						type: "CHANGE_PASSWORD",
-						payload: { success: false, message: e.data },
+						payload: { success: false, message: e.message },
 					});
 				},
 			);
@@ -323,11 +340,86 @@ export const changeAccount = (id, name, lastname, email, picture, username) => {
 					document.location.reload(true);
 				},
 				e => {
+					console.log(e);
+					console.log("hel");
 					dispatch({
 						type: "CHANGE_ACCOUNT",
-						payload: { success: false, message: e.data },
+						payload: { success: false, message: e.message },
 					});
 				},
 			);
+	};
+};
+
+export const fetch_post = post_id => {
+	return async function(dispatch) {
+		try {
+			console.log();
+			let r = await backend.get(`posts/${post_id}`);
+			dispatch({
+				type: "FETCH_POST",
+				payload: { ...r.data[0].fields, id: r.data[0].pk },
+			});
+		} catch (e) {}
+	};
+};
+
+const f = async function(responseData, myData, dispatch) {
+	for (let i = 0; i < responseData["1"].length; i++) {
+		let comment = await backend.get(`comments/${responseData["1"][i]["0"]}`);
+
+		dispatch(fetchUserById(comment.data[0].fields.creator));
+		myData["1"].push({
+			"0": { ...comment.data[0].fields, id: comment.data[0].pk },
+			"1": [],
+		});
+		f(responseData["1"][i], myData["1"][i], dispatch);
+	}
+};
+
+export const fetchPostDetail = id => {
+	return async function(dispatch) {
+		let r = await backend.get("posts/detail/", {
+			params: {
+				id,
+			},
+		});
+
+		let data = {};
+		console.log("heil");
+		console.log(r);
+		let post = await backend.get(`posts/${r.data["0"]}`);
+		data["0"] = { ...post.data[0].fields, id: post.data[0].pk };
+		dispatch(fetchUserById(post.data[0].fields.creator_id));
+		data["1"] = [];
+		for (let i = 0; i < r.data["1"].length; i++) {
+			let comment = await backend.get(`comments/${r.data["1"][i]["0"]}`);
+			dispatch(fetchUserById(comment.data[0].fields.creator));
+			data["1"].push({
+				"0": { ...comment.data[0].fields, id: comment.data[0].pk },
+				"1": [],
+			});
+			f(r.data["1"][i], data["1"][i], dispatch);
+		}
+		dispatch({ type: "FETCH_POST_DETAIL", payload: data });
+	};
+	// dispatch({type: 'FETCH_POST', payload: { ...r.data[0].fields, id: r.data[0].pk }})
+
+	// console.log('heil')
+	// return function(dispatch) {
+};
+
+export const addComment = (postId, parentId, fromPost, myId, text) => {
+	return function(dispatch) {
+		backend
+			.post("comments/add/", {
+				parentId,
+				fromPost,
+				myId,
+				text,
+			})
+			.then(r => {
+				dispatch(fetchPostDetail(postId));
+			});
 	};
 };

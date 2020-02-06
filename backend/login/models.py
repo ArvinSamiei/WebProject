@@ -30,7 +30,8 @@ class User(models.Model):
         return self.full_name
 
     class META:
-        fields=('first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels')
+        fields = ('first_name', 'last_name', 'email', 'image',
+                  'last_login', 'followingUsers', 'followingChannels')
 
 
 class UserRelation(models.Model):
@@ -65,6 +66,6 @@ class Post(models.Model):
 
 class Comment(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    replies = models.ManyToManyField('self', related_name='comment_replies')
+    replies = models.ManyToManyField(
+        'self', related_name='comment_replies', blank=True, symmetrical=False)
     text = models.TextField()
-
