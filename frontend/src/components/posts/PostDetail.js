@@ -10,7 +10,7 @@ import {
 	deleteComment,
 	editComment,
 	likesAndDislikes,
-	deletePost
+	deletePost,
 } from "../../actions";
 import "./PostDetail.css";
 import { Link, Redirect } from "react-router-dom";
@@ -40,7 +40,7 @@ export class PostDetail extends Component {
 		edit: false,
 		value: "",
 		copied: false,
-		redirect: false
+		redirect: false,
 	};
 	forPost = true;
 
@@ -124,7 +124,10 @@ export class PostDetail extends Component {
 								<h4 className="media-heading text-uppercase reviews">
 									{user.first_name + " " + user.last_name}{" "}
 								</h4>
-								<p className="media-comment">{data["1"][i]["0"].text}</p>
+								<p
+									className="media-comment"
+									dangerouslySetInnerHTML={this.createText(data["1"][i]["0"])}
+								></p>
 								<button
 									className="btn btn-success"
 									onClick={e => {
@@ -220,7 +223,7 @@ export class PostDetail extends Component {
 					className="btn btn-danger"
 					onClick={e => {
 						this.props.deletePost(this.props.postDetail["0"].id);
-						this.setState({redirect: true})
+						this.setState({ redirect: true });
 					}}
 				>
 					Delete
@@ -284,9 +287,12 @@ export class PostDetail extends Component {
 								<h4 className="media-heading text-uppercase reviews">
 									{user.first_name + " " + user.last_name}{" "}
 								</h4>
-								<p className="media-comment">
-									{this.props.postDetail["1"][i]["0"].text}
-								</p>
+								<p
+									className="media-comment"
+									dangerouslySetInnerHTML={this.createText(
+										this.props.postDetail["1"][i]["0"],
+									)}
+								></p>
 								<button
 									className="btn btn-success"
 									onClick={e => {
@@ -405,8 +411,8 @@ export class PostDetail extends Component {
 		);
 	};
 
-	createText = () => {
-		return { __html: this.props.postDetail["0"].text };
+	createText = elem => {
+		return { __html: elem.text };
 	};
 
 	render() {
@@ -414,8 +420,8 @@ export class PostDetail extends Component {
 			return null;
 		}
 
-		if(this.state.redirect){
-			return <Redirect to='/'></Redirect>
+		if (this.state.redirect) {
+			return <Redirect to="/"></Redirect>;
 		}
 		let user = this.findName(this.props.postDetail["0"].creator_id);
 		if (!user) {
@@ -439,9 +445,12 @@ export class PostDetail extends Component {
 					{this.renderImageOfPost()}
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
-					<p dangerouslySetInnerHTML={this.createText()}></p>
-					
-					
+					<p
+						dangerouslySetInnerHTML={this.createText(
+							this.props.postDetail["0"],
+						)}
+					></p>
+
 					{this.renderLikeImage()}
 					{this.props.likes}
 					{this.renderDislikeImage()}
@@ -548,5 +557,5 @@ export default connect(mapStateToProps, {
 	deleteComment,
 	editComment,
 	likesAndDislikes,
-	deletePost
+	deletePost,
 })(PostDetail);
