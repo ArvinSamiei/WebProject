@@ -163,6 +163,7 @@ export const createPost = (id, title, text, type, image) => {
 
 export const fetchPosts = (id, name) => {
 	return async function(dispatch) {
+		dispatch({type: 'REMOVE_ALL_POSTS', payload:[]})
 		try {
 			let r = await backend.get(`/posts`, {
 				params: {
@@ -170,7 +171,10 @@ export const fetchPosts = (id, name) => {
 					name,
 				},
 			});
+			console.log(r)
 			let posts = r.data;
+			posts.sort(function(a, b){return a.create_date-b.create_date})
+
 			dispatch({ type: "FETCH_ALL_POSTS", payload: r.data });
 			for (let i = 0; i < posts.length; i++) {
 				try {

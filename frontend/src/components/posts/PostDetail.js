@@ -443,6 +443,7 @@ export class PostDetail extends Component {
 						</h1>
 					</Link>
 					{this.renderImageOfPost()}
+					<h4>On {this.props.postDetail['0'].create_date.substring(0, 10)}</h4>
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
 					<p

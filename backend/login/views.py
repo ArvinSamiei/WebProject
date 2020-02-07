@@ -1,3 +1,4 @@
+from django.db. models import F
 import django
 from django.shortcuts import render
 from .models import *
@@ -22,7 +23,6 @@ import datetime
 import json
 from django.http import JsonResponse
 from django.core.mail import send_mail
-
 
 
 @api_view(['POST'])
@@ -91,6 +91,7 @@ def download_image(request, username):
         with open('images/default-user-icon-profile.png', "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
 
+
 def download_image2(request, user_id):
     user = User.objects.get(pk=user_id)
     image_name = str(user.image)
@@ -101,17 +102,20 @@ def download_image2(request, user_id):
         with open('images/default-user-icon-profile.png', "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
 
+
 def send_profile(request, username):
     user = User.objects.filter(username=username)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))
     return HttpResponse(product, )
 
+
 def fetch_user(request, user_id):
     user = User.objects.filter(pk=user_id)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))
     return HttpResponse(product, content_type='application/json')
+
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
@@ -122,9 +126,11 @@ def createPost(request):
     text = request.data['text']
     id = request.data['id']
     typ = request.data['type']
-    post = Post(creater_type=typ, creator_id=id, title=title, text=text, image=image)
+    post = Post(creater_type=typ, creator_id=id,
+                title=title, text=text, image=image)
     post.save()
     return Response('', status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
@@ -141,6 +147,7 @@ def editPost(request):
     post.save()
     return Response('', status=status.HTTP_200_OK)
 
+
 @csrf_exempt
 def deletePost(request):
     body_unicode = request.body.decode('utf-8')
@@ -149,6 +156,7 @@ def deletePost(request):
     post = Post.objects.get(pk=postId)
     post.delete()
     return HttpResponse('Post Deleted')
+
 
 def fetch_posts_following(id):
     posts = list(Post.objects.all())
@@ -169,21 +177,40 @@ def fetch_posts_following(id):
                     fetched_posts.append(post)
     return fetched_posts
 
+
 def fetch_posts_newests():
-    return Post.objects.all().order_by('-create_date')[:50]
-from django.db. models import F 
+    return list(Post.objects.order_by('-create_date'))[:50]
+
+
 def fetch_posts_breakings():
     return Post.objects.filter(create_date__gte=timezone.now() - timedelta(days=7)).annotate(point=F('likes')-F('dislikes')).order_by('-point')[:20]
 
+
+def g(comment, id):
+    if comment.replies.count() == 0:
+        return False
+    for reply in comment.replies.all():
+        if reply.creator.id == id:
+            return True
+        else:
+            if(g(reply, id)):
+                return True
+
+
 def fetch_posts_participating(id):
+    id = int(id)
     first = list(Post.objects.filter(creater_type=0).filter(creator_id=id))
     second = []
     posts = list(Post.objects.all())
     for post in posts:
+        print(type(id))
         for comment in post.comments.all():
-            if comment.creator.id == id:
-                second.append(post)
-    return [*first, *second]
+            print(comment.creator.id, id)
+            if comment.creator.id == id or g(comment, id):
+                print(post.title)
+                first.append(post)
+    return list(set(first))
+
 
 @api_view(["GET"])
 @csrf_exempt
@@ -191,19 +218,23 @@ def fetchAllPosts(request):
     id = request.GET.get('id')
     name = request.GET.get('name')
     fetched_posts = []
-    if name=="Following":
+    if name == "Following":
         fetched_posts = fetch_posts_following(id)
-    elif name=="Newests":
+    elif name == "Newests":
         fetched_posts = fetch_posts_newests()
-    elif name== "Breakings":
+        # print(fetched_posts)
+    elif name == "Breakings":
         fetched_posts = fetch_posts_breakings()
-    elif name=="Participatings":
+    elif name == "Participatings":
         fetched_posts = fetch_posts_participating(id)
-    
+    fetched_posts = list(set(fetched_posts))
     postse = serializers.serialize(
         'json', fetched_posts)
+    print(postse)
     return HttpResponse(postse)
-@api_view(['GET',])
+
+
+@api_view(['GET', ])
 def download_image_post(request, post_id):
     post = Post.objects.get(pk=post_id)
     image_name = str(post.image)
@@ -212,6 +243,8 @@ def download_image_post(request, post_id):
             return HttpResponse(f.read(), content_type="image/jpeg")
     except IOError as e:
         return Response('', status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['GET'])
 @csrf_exempt
 def others_profile(request, id):
@@ -222,9 +255,11 @@ def others_profile(request, id):
     if UserRelation.objects.filter(follower=me).filter(followed=user).exists():
         data = {'following': True}
     else:
-        data={'following': False}
+        data = {'following': False}
     data = json.dumps(data)
     return HttpResponse(data)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def follow(request):
@@ -238,15 +273,18 @@ def follow(request):
     me = User.objects.filter(pk=myId)[0]
     if user == me:
         return Response('An Error Occured', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     if followe:
         userRelation = UserRelation(follower=me, followed=user)
         userRelation.save()
         return HttpResponse('You Followed '+user.full_name)
     else:
-        userRelation = UserRelation.objects.filter(follower=me).filter(followed=user)
+        userRelation = UserRelation.objects.filter(
+            follower=me).filter(followed=user)
         userRelation.delete()
         return HttpResponse('You Unfollowed '+user.full_name)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def changePassword(request):
@@ -261,7 +299,8 @@ def changePassword(request):
         user.save()
         return Response('Your Password Changed Successfully')
     else:
-        return Response({ 'message': 'Password Incorrect' }, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Password Incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
@@ -284,6 +323,7 @@ def changeAccount(request):
     user.save()
     return Response('Account Successfully Changed!')
 
+
 def f(data):
     c = Comment.objects.get(pk=data['0'])
     for reply in c.replies.all():
@@ -305,21 +345,25 @@ def fetch_post_detail(request):
         f(data['1'][i])
     data = json.dumps(data)
     return HttpResponse(data)
-        
+
+
 def fetch_post(request, post_id):
     post = Post.objects.filter(pk=post_id)
     data = serializers.serialize('json', post)
     return HttpResponse(data)
+
 
 def fetch_comment(request, comment_id):
     comment = Comment.objects.filter(pk=comment_id)
     data = serializers.serialize('json', comment)
     return HttpResponse(data)
 
+
 def send_profile_by_id(request, user_id):
     user = User.objects.filter(pk=user_id)
     data = serializers.serialize('json', user)
     return HttpResponse(data)
+
 
 @api_view(['POST'])
 @csrf_exempt
@@ -345,6 +389,8 @@ def add_comment(request):
         comment.replies.add(newComment)
         comment.save()
     return Response('Added')
+
+
 @api_view(['POST'])
 @csrf_exempt
 def like(request):
@@ -365,6 +411,7 @@ def like(request):
     data = {'likes': post.likes.count(), 'dislikes': post.dislikes.count()}
     data = json.dumps(data)
     return HttpResponse(data)
+
 
 @api_view(['POST'])
 @csrf_exempt
@@ -387,6 +434,7 @@ def dislike(request):
     data = json.dumps(data)
     return HttpResponse(data)
 
+
 def likes_and_dislikes(request, post_id):
     user_id = request.GET.get('userId')
     print(user_id, 'pppppppppppppppppppppppppppppppppppppppppp')
@@ -401,6 +449,7 @@ def likes_and_dislikes(request, post_id):
     data = json.dumps(data)
     return HttpResponse(data)
 
+
 @csrf_exempt
 def edit_comment(request):
     body_unicode = request.body.decode('utf-8')
@@ -412,6 +461,7 @@ def edit_comment(request):
     comment.save()
     return HttpResponse('Comment Edited')
 
+
 @csrf_exempt
 def delete_comment(request):
     body_unicode = request.body.decode('utf-8')
@@ -420,6 +470,7 @@ def delete_comment(request):
     comment = Comment.objects.get(pk=commentId)
     comment.delete()
     return HttpResponse('Comment Deleted')
+
 
 def fetch_followers(request, user_id):
     user = User.objects.get(pk=user_id)
@@ -430,6 +481,7 @@ def fetch_followers(request, user_id):
         followings.append(followingPerson)
     data = serializers.serialize('json', followings)
     return HttpResponse(data)
+
 
 def fetch_followings(request, user_id):
     user = User.objects.get(pk=user_id)
@@ -442,14 +494,16 @@ def fetch_followings(request, user_id):
         followings.append(channel)
     data = serializers.serialize('json', followings)
     return HttpResponse(data)
+
+
 @api_view(['POST'])
 @csrf_exempt
 def forgot_password(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     email = body['email']
-    password = django.contrib.auth.models.User.objects.make_random_password() 
-    data=None
+    password = django.contrib.auth.models.User.objects.make_random_password()
+    data = None
     if User.objects.filter(email=email).exists():
         user = User.objects.filter(email=email)[0]
         user.password = password
@@ -461,7 +515,8 @@ def forgot_password(request):
             [email],
             fail_silently=False,
         )
-        data = {'success': True, 'message': 'We have sent a new password to your account'}
+        data = {'success': True,
+                'message': 'We have sent a new password to your account'}
     else:
         data = {'success': False, 'message': 'User with this email not exist'}
     data = json.dumps(data)

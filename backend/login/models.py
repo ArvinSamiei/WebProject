@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from django.utils import timezone
-
+from rest_framework import serializers
 
 class Channel(models.Model):
     admin = models.ForeignKey(
@@ -48,6 +48,30 @@ class UserRelation(models.Model):
     # def findFollowings(self, user):
     #     UserRelation.objects.filter(follower=user).only("followed")
 
+# class PostSerializer(serializers.Serializer):
+#     creater_type = serializers.IntegerField()   
+#     creator_id = serializers.IntegerField()
+#     title = serializers.CharField()
+#     image = serializers.ImageField()
+#     text = serializers.TextField()
+#     create_date = serializers.DateTimeField()
+#     likes = serializers.ManyToManyField()
+#     dislikes = serializers.ManyToManyField(
+#         )
+#     class META:
+#         comments = models.ManyToManyField('Comment', blank=True)
+#         fields = ( # this needs to be ordered properly
+#              'create_date',
+#              'id',
+#              'creater_type',
+#              'creator_id',
+#              'title',
+#              'image',
+#              'text',
+#              'likes',
+#              'dislikes',
+#              'comments'
+#          )
 
 class Post(models.Model):
     creater_type = models.IntegerField()
@@ -56,12 +80,26 @@ class Post(models.Model):
     image = models.ImageField(upload_to='images/posts', blank=True)
     text = models.TextField()
     create_date = models.DateTimeField(default=timezone.now)
-    likes = models.ManyToManyField('User', related_name='likes')
-    dislikes = models.ManyToManyField('User', related_name='dislikes')
-    comments = models.ManyToManyField('Comment')
+    likes = models.ManyToManyField('User', related_name='likes', blank=True)
+    dislikes = models.ManyToManyField(
+        'User', related_name='dislikes', blank=True)
+    comments = models.ManyToManyField('Comment', blank=True)
 
     def __str__(self):
         return self.title
+    class META:
+        fields = (
+             'create_date',
+             'id',
+             'creater_type',
+             'creator_id',
+             'title',
+             'image',
+             'text',
+             'likes',
+             'dislikes',
+             'comments'
+         )
 
 
 class Comment(models.Model):
