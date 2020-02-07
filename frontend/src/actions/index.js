@@ -12,12 +12,10 @@ export const login = (username, password) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						// document.cookie = `username=${username}`;
 						dispatch({
 							type: "LOGIN",
 							payload: { success: true, message: r.data.message },
 						});
-						console.log(r);
 						dispatch(fetchPosts(r.data.id, "Following"));
 					}
 				},
@@ -46,7 +44,6 @@ export const signup = (username, password, email, lastname, name, picture) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						// document.cookie = `username=${username}`;
 						setTimeout(() => {
 							localStorage.removeItem("username");
 						});
@@ -70,13 +67,11 @@ export const signup = (username, password, email, lastname, name, picture) => {
 export const changeImage = (picture, username) => {
 	return function(dispatch) {
 		var formData = new FormData();
-		// formData.append("name", this.state.name);
 		formData.append("image", picture[0]);
 		formData.append("username", username);
 		backend.post("users/uploadImage/", formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
-				// Cookie: document.cookie,
 			},
 		});
 	};
@@ -99,7 +94,6 @@ export const fetchUser = username => {
 				withCredentials: true,
 			})
 			.then(r => {
-				console.log(r);
 				dispatch({
 					type: "USER_PROFILE",
 					payload: { ...r.data[0].fields, id: r.data[0].pk },
@@ -114,8 +108,6 @@ export const fetchUserById = id => {
 				withCredentials: true,
 			})
 			.then(r => {
-				console.log("cheteeeee");
-				console.log(r);
 				dispatch({
 					type: "USER_PROFILE_BY_ID",
 					payload: { ...r.data[0].fields, id: r.data[0].pk },
@@ -146,7 +138,6 @@ export const createPost = (id, title, text, type, image) => {
 			.post("posts/createPost/", formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
-					// Cookie: document.cookie,
 				},
 			})
 			.then(
@@ -214,7 +205,6 @@ export const fetchUserAndFollowingState = (myId, hisId) => {
 				myId,
 			},
 		});
-		console.log(r.data.following);
 		dispatch({
 			type: "OTHER_USER_FOLLOWING",
 			payload: { following: r.data.following },
@@ -251,7 +241,6 @@ export const follow = (myId, hisId) => {
 					dispatch(fetchUserAndFollowingState(myId, hisId));
 				},
 				e => {
-					console.log(e);
 					dispatch({
 						type: "FOLLOW",
 						payload: { success: false, message: e },
@@ -278,7 +267,6 @@ export const unfollow = (myId, hisId) => {
 					dispatch(fetchUserAndFollowingState(myId, hisId));
 				},
 				e => {
-					console.log(e);
 					dispatch({
 						type: "UNFOLLOW",
 						payload: { success: false, message: e.message },
@@ -304,8 +292,6 @@ export const changePassword = (id, oldPassword, newPassword) => {
 					});
 				},
 				e => {
-					console.log("heil");
-					console.log(e);
 					dispatch({
 						type: "CHANGE_PASSWORD",
 						payload: { success: false, message: e.message },
@@ -340,8 +326,6 @@ export const changeAccount = (id, name, lastname, email, picture, username) => {
 					document.location.reload(true);
 				},
 				e => {
-					console.log(e);
-					console.log("hel");
 					dispatch({
 						type: "CHANGE_ACCOUNT",
 						payload: { success: false, message: e.message },
@@ -354,7 +338,6 @@ export const changeAccount = (id, name, lastname, email, picture, username) => {
 export const fetch_post = post_id => {
 	return async function(dispatch) {
 		try {
-			console.log();
 			let r = await backend.get(`posts/${post_id}`);
 			dispatch({
 				type: "FETCH_POST",
@@ -386,8 +369,6 @@ export const fetchPostDetail = id => {
 		});
 
 		let data = {};
-		console.log("heil");
-		console.log(r);
 		let post = await backend.get(`posts/${r.data["0"]}`);
 		data["0"] = { ...post.data[0].fields, id: post.data[0].pk };
 		dispatch(fetchUserById(post.data[0].fields.creator_id));
@@ -402,11 +383,14 @@ export const fetchPostDetail = id => {
 			f(r.data["1"][i], data["1"][i], dispatch);
 		}
 		dispatch({ type: "FETCH_POST_DETAIL", payload: data });
+		dispatch({
+			type: "NUM_LIKES_DISLIKES",
+			payload: {
+				likes: post.data[0].fields.likes.length,
+				dislikes: post.data[0].fields.dislikes.length,
+			},
+		});
 	};
-	// dispatch({type: 'FETCH_POST', payload: { ...r.data[0].fields, id: r.data[0].pk }})
-
-	// console.log('heil')
-	// return function(dispatch) {
 };
 
 export const addComment = (postId, parentId, fromPost, myId, text) => {
@@ -424,28 +408,49 @@ export const addComment = (postId, parentId, fromPost, myId, text) => {
 	};
 };
 
-export const like = postId => {
+export const like = (postId, userId) => {
 	return function(dispatch) {
 		backend
 			.post("posts/like", {
 				postId,
+				userId,
 			})
 			.then(r => {
-				console.log(r);
-				dispatch(fetchPostDetail(postId));
+				dispatch({
+					type: "NUM_LIKES_DISLIKES",
+					payload: { likes: r.data.likes, dislikes: r.data.dislikes },
+				});
+				dispatch(likesAndDislikes(postId, userId));
 			});
 	};
 };
 
-export const dislike = postId => {
+export const dislike = (postId, userId) => {
 	return function(dispatch) {
 		backend
 			.post("posts/dislike", {
 				postId,
+				userId,
 			})
 			.then(r => {
-				console.log(r);
-				dispatch(fetchPostDetail(postId));
+				dispatch({
+					type: "NUM_LIKES_DISLIKES",
+					payload: { likes: r.data.likes, dislikes: r.data.dislikes },
+				});
+				dispatch(likesAndDislikes(postId, userId));
+			});
+	};
+};
+
+export const likesAndDislikes = (postId, userId) => {
+	return function(dispatch) {
+		backend
+			.get(`posts/likesanddislikes/${postId}/`, {
+				params: { userId },
+			})
+			.then(r => {
+				console.log(r.data.state);
+				dispatch({ type: "LIKES_AND_DISLIKES", payload: Number(r.data.state) });
 			});
 	};
 };
@@ -478,7 +483,7 @@ export const editComment = (commentId, postId, text) => {
 export const fetchFollowers = userId => {
 	return function(dispatch) {
 		backend.get(`users/${userId}/followers`).then(r => {
-			dispatch({type: "FOLLOWERS", payload: r.data })
+			dispatch({ type: "FOLLOWERS", payload: r.data });
 		});
 	};
 };
@@ -486,7 +491,18 @@ export const fetchFollowers = userId => {
 export const fetchFollowings = userId => {
 	return function(dispatch) {
 		backend.get(`users/${userId}/followings`).then(r => {
-			dispatch({type: "FOLLOWINGS", payload: r.data })
+			dispatch({ type: "FOLLOWINGS", payload: r.data });
+		});
+	};
+};
+
+export const forgotPassword = email => {
+	return function(dispatch) {
+		backend.post("users/forgotPassword", {email}).then(r => {
+			dispatch({
+				type: "FORGOT_PASSWORD",
+				payload: { success: r.data.success, message: r.data.message },
+			});
 		});
 	};
 };

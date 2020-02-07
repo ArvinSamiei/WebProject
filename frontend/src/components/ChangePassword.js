@@ -30,7 +30,6 @@ export class ChangePassword extends Component {
 
 	handleSubmit = e => {
         e.preventDefault();
-        console.log(this.state.newPassword)
 		if (this.state.newPassword != this.state.repeatNewPassword) {
 			this.setState({error: "Confirm Your New Password"})
 			return;

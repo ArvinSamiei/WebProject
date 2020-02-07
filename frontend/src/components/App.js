@@ -11,6 +11,7 @@ import OthersProfile from "./OthersProfile";
 import ChangePassword from "./ChangePassword";
 import ChangeAccount from "./ChangeAccount";
 import PostDetail from './posts/PostDetail'
+import  ForgotPassword  from "./ForgotPassword";
 
 export default class App extends Component {
 	render() {
@@ -55,6 +56,15 @@ export default class App extends Component {
 							render={() => (
 								<div>
 									<ChangePassword />
+								</div>
+							)}
+						/>
+						<Route
+							exact
+							path="/forgotPassword"
+							render={() => (
+								<div>
+									<ForgotPassword />
 								</div>
 							)}
 						/>

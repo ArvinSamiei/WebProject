@@ -14,6 +14,9 @@ import fetchPostDetail from './fetchPostDetail'
 import userById from './fetchUserById'
 import followers from './fetchFollowers'
 import followings from './fetchFollowings'
+import likesDislikes from './likesAndDislikes'
+import numLikesDislikes from './numLikesDislikes'
+import forgotPassword from './forgotPassword'
 
 export default combineReducers({
 	login: loginReducer,
@@ -30,5 +33,8 @@ export default combineReducers({
 	fetchPostDetail,
 	userById,
 	followers,
-	followings
+	followings,
+	likesDislikes,
+	numLikesDislikes,
+	forgotPassword
 });

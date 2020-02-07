@@ -112,7 +112,6 @@ export class Profile extends Component {
 		if (!this.props.user) {
 			return null;
 		}
-		console.log(this.props.user);
 		const posts = this.props.posts.map(post => {
 			return <Post key={post.pk} post={post} users={this.props.users} />;
 		});

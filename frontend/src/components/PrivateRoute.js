@@ -20,7 +20,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 };
 
 const mapStateToProps = state => {
-	console.log(state);
 	return {
 		isLoggedIn: state.login.success,
 		isSignedup: state.signup.success,

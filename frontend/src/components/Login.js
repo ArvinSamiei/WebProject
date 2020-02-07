@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login } from "../actions";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 
 export class Login extends Component {
 	state = { username: "", password: "", tried: false };
@@ -67,6 +67,10 @@ export class Login extends Component {
 								onChange={this.handlePassChange}
 							/>
 						</div>
+						<Link to='/forgotPassword'>
+						forgot password?
+						</Link>
+						<br/><br/>
 						<button
 							onSubmit={e => {
 								this.handleSubmit(e);

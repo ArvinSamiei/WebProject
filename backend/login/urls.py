@@ -7,6 +7,7 @@ urlpatterns = [
     path('comments/edit/', views.edit_comment),
     path('comments/delete/', views.delete_comment),
     path('posts/like', views.like),
+    path('posts/likesanddislikes/<int:post_id>/', views.likes_and_dislikes),
     path('posts/dislike', views.dislike),
     path('users/login/', views.login),
     path('users/signup/', views.signup),
@@ -27,7 +28,8 @@ urlpatterns = [
     path('posts/<int:post_id>', views.fetch_post),
     path('comments/<int:comment_id>', views.fetch_comment),
     path('users/<int:user_id>/followers', views.fetch_followers),
-    path('users/<int:user_id>/followings', views.fetch_followings)
+    path('users/<int:user_id>/followings', views.fetch_followings),
+    path('users/forgotPassword', views.forgot_password)
     
 
 ]

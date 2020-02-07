@@ -8,7 +8,8 @@ import {
 	dislike,
 	fetchUser,
 	deleteComment,
-	editComment
+	editComment,
+	likesAndDislikes,
 } from "../../actions";
 import "./PostDetail.css";
 import { Link } from "react-router-dom";
@@ -34,7 +35,7 @@ export class PostDetail extends Component {
 		fromPost: false,
 		caller: 0,
 		text: "",
-		edit: false
+		edit: false,
 	};
 	forPost = true;
 
@@ -62,6 +63,7 @@ export class PostDetail extends Component {
 		this._isMounted = true;
 		this.props.fetchPostDetail(this.props.id);
 		this.props.fetchUser(localStorage.getItem("username"));
+		this.props.likesAndDislikes(this.props.id, this.getCookie("id"));
 
 		this.interval = setInterval(() => {
 			this.setState({ dummy: "" + "q" });
@@ -87,7 +89,6 @@ export class PostDetail extends Component {
 			if (!user) {
 				continue;
 			}
-			console.log("sarelareeeeee");
 			let commentNo = this.state.commentNo;
 			let target = this.returnTarget();
 			result.push(
@@ -125,7 +126,7 @@ export class PostDetail extends Component {
 										this.setState({
 											fromPost: false,
 											caller: data["1"][i]["0"].id,
-											edit: false
+											edit: false,
 										});
 										this.openModal();
 									}}
@@ -191,7 +192,7 @@ export class PostDetail extends Component {
 						this.setState({
 							fromPost: false,
 							caller: comment.id,
-							edit: true
+							edit: true,
 						});
 						this.openModal();
 					}}
@@ -207,15 +208,12 @@ export class PostDetail extends Component {
 	};
 
 	renderComments = () => {
-		console.log("kojayiiiiii pa");
-		console.log(this.props.postDetail["1"].length);
 		let result = [];
 		for (let i = 0; i < this.props.postDetail["1"].length; i++) {
 			let user = this.findName(this.props.postDetail["1"][i]["0"].creator);
 			if (!user) {
 				continue;
 			}
-			console.log(this.props.postDetail["1"][i]["0"]);
 			let commentNo = this.state.commentNo;
 			let target = this.returnTarget();
 
@@ -308,9 +306,12 @@ export class PostDetail extends Component {
 	};
 
 	handleSubmit = () => {
-		console.log("sakam");
-		if (this.state.edit){
-			this.props.editComment(this.state.caller, this.props.postDetail["0"].id, this.state.text)
+		if (this.state.edit) {
+			this.props.editComment(
+				this.state.caller,
+				this.props.postDetail["0"].id,
+				this.state.text,
+			);
 		}
 		this.props.addComment(
 			this.props.postDetail["0"].id,
@@ -324,16 +325,52 @@ export class PostDetail extends Component {
 	textChange = e => {
 		this.setState({ text: e.target.value });
 	};
+	renderLikeImage = () => {
+		let src = "";
+		if (this.props.likesDislikes == 1) {
+			src = "https://img.icons8.com/color/48/000000/filled-like.png";
+		} else {
+			src = "https://img.icons8.com/carbon-copy/100/000000/filled-like.png";
+		}
+
+		return (
+			<img
+				onClick={e => {
+					this.props.like(this.props.postDetail["0"].id, this.getCookie("id"));
+				}}
+				style={{ width: "40px", cursor: "pointer" }}
+				src={src}
+			/>
+		);
+	};
+
+	renderDislikeImage = () => {
+		let src = "";
+		if (this.props.likesDislikes == 0) {
+			src = "https://img.icons8.com/color/64/000000/dislike.png";
+		} else {
+			src = "https://img.icons8.com/dotty/80/000000/dislike.png";
+		}
+		return (
+			<img
+				style={{ width: "40px", cursor: "pointer" }}
+				src={src}
+				onClick={e => {
+					this.props.dislike(
+						this.props.postDetail["0"].id,
+						this.getCookie("id"),
+					);
+				}}
+			/>
+		);
+	};
 
 	render() {
 		if (!this.props.postDetail) {
 			return null;
 		}
-		console.log("khodafez");
-		console.log(this.props.postDetail);
 		let user = this.findName(this.props.postDetail["0"].creator_id);
 		if (!user) {
-			console.log("sare karee");
 			return null;
 		}
 		return (
@@ -356,22 +393,10 @@ export class PostDetail extends Component {
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
 					<p>{this.props.postDetail["0"].text}</p>
-					<img
-						onClick={e => {
-							this.props.like(this.props.postDetail["0"].id);
-						}}
-						style={{ width: "40px", cursor: "pointer" }}
-						src="https://img.icons8.com/color/48/000000/filled-like.png"
-					/>
-					{this.props.postDetail["0"].likes}
-					<img
-						style={{ width: "40px", cursor: "pointer" }}
-						src="https://img.icons8.com/color/64/000000/dislike.png"
-						onClick={e => {
-							this.props.dislike(this.props.postDetail["0"].id);
-						}}
-					/>
-					{this.props.postDetail["0"].dislikes}
+					{this.renderLikeImage()}
+					{this.props.likes}
+					{this.renderDislikeImage()}
+					{this.props.dislikes}
 				</div>
 
 				<ul
@@ -441,11 +466,13 @@ export class PostDetail extends Component {
 }
 
 const mapStateToProps = state => {
-	console.log(state);
 	return {
 		postDetail: state.fetchPostDetail,
 		userById: state.userById,
 		user: state.user,
+		likesDislikes: state.likesDislikes,
+		likes: state.numLikesDislikes.likes,
+		dislikes: state.numLikesDislikes.dislikes
 	};
 };
 
@@ -457,5 +484,6 @@ export default connect(mapStateToProps, {
 	dislike,
 	fetchUser,
 	deleteComment,
-	editComment
+	editComment,
+	likesAndDislikes,
 })(PostDetail);

@@ -56,8 +56,8 @@ class Post(models.Model):
     image = models.ImageField(upload_to='images/posts', blank=True)
     text = models.TextField()
     create_date = models.DateTimeField(default=timezone.now)
-    likes = models.IntegerField(default=0)
-    dislikes = models.IntegerField(default=0)
+    likes = models.ManyToManyField('User', related_name='likes')
+    dislikes = models.ManyToManyField('User', related_name='dislikes')
     comments = models.ManyToManyField('Comment')
 
     def __str__(self):

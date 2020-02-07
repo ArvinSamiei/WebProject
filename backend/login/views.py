@@ -1,3 +1,4 @@
+import django
 from django.shortcuts import render
 from .models import *
 from rest_framework.response import Response
@@ -20,17 +21,17 @@ from datetime import timedelta
 import datetime
 import json
 from django.http import JsonResponse
+from django.core.mail import send_mail
+
 
 
 @api_view(['POST'])
 @csrf_exempt
 def login(request):
-    # print(request.headers)
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     username = body['username']
     password = body['password']
-    # print(username, password)
     queryset = User.objects.filter(username=username).filter(password=password)
     if queryset.exists():
         user = queryset[0]
@@ -83,7 +84,6 @@ def uploadImage(request):
 def download_image(request, username):
     user = User.objects.get(username=username)
     image_name = str(user.image)
-    # print(image_name)
     try:
         with open(image_name, "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
@@ -92,10 +92,8 @@ def download_image(request, username):
             return HttpResponse(f.read(), content_type="image/jpeg")
 
 def download_image2(request, user_id):
-    # print(user_id, 'oooooooooooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
     user = User.objects.get(pk=user_id)
     image_name = str(user.image)
-    # print(image_name)
     try:
         with open(image_name, "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
@@ -104,14 +102,12 @@ def download_image2(request, user_id):
             return HttpResponse(f.read(), content_type="image/jpeg")
 
 def send_profile(request, username):
-    # print(request.headers)
     user = User.objects.filter(username=username)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))
     return HttpResponse(product, )
 
 def fetch_user(request, user_id):
-    # print(request.headers)
     user = User.objects.filter(pk=user_id)
     product = serializers.serialize(
         'json', user, fields=('username', 'first_name', 'last_name', 'email', 'image', 'last_login', 'followingUsers', 'followingChannels'))
@@ -129,7 +125,6 @@ def createPost(request):
     post = Post(creater_type=typ, creator_id=id, title=title, text=text, image=image)
     post.save()
     return Response('', status=status.HTTP_200_OK)
-# @api_view(['GET'])
 
 def fetch_posts_following(id):
     posts = list(Post.objects.all())
@@ -138,7 +133,6 @@ def fetch_posts_following(id):
     followingUsers = []
     for i in followingUserse:
         followingUsers.append(i.followed)
-    # print(followingUsers)
     fetched_posts = []
     for post in posts:
         if post.creater_type == 0:
@@ -155,8 +149,6 @@ def fetch_posts_newests():
     return Post.objects.all().order_by('-create_date')[:50]
 from django.db. models import F 
 def fetch_posts_breakings():
-    # print(timezone.now().date() - timedelta(days=7))
-    # print(Post.objects.get(pk=1).create_date)
     return Post.objects.filter(create_date__gte=timezone.now() - timedelta(days=7)).annotate(point=F('likes')-F('dislikes')).order_by('-point')[:20]
 
 def fetch_posts_participating(id):
@@ -183,9 +175,7 @@ def fetchAllPosts(request):
         fetched_posts = fetch_posts_breakings()
     elif name=="Participatings":
         fetched_posts = fetch_posts_participating(id)
-    # print(id)
     
-    # print(fetched_posts)
     postse = serializers.serialize(
         'json', fetched_posts)
     return HttpResponse(postse)
@@ -193,7 +183,6 @@ def fetchAllPosts(request):
 def download_image_post(request, post_id):
     post = Post.objects.get(pk=post_id)
     image_name = str(post.image)
-    # print(image_name)
     try:
         with open(image_name, "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
@@ -220,7 +209,6 @@ def follow(request):
     myId = body['myId']
     hisId = body['hisId']
     followe = body['follow']
-    # print(followe)
     hisId = int(hisId)
     user = User.objects.filter(pk=hisId)[0]
     me = User.objects.filter(pk=myId)[0]
@@ -274,9 +262,7 @@ def changeAccount(request):
 
 def f(data):
     c = Comment.objects.get(pk=data['0'])
-    # print(c.__dict__, 'oooooooooooooooooooo')
     for reply in c.replies.all():
-        print(c.id, 'ppppppppppppppppppppppppppppppppppppppppp')
         data['1'].append({'0': reply.id, '1': []})
     for i in range(len(data['1'])):
         f(data['1'][i])
@@ -285,7 +271,6 @@ def f(data):
 def fetch_post_detail(request):
     data = dict()
     post_id = request.GET.get('id')
-    print(post_id, 'lllllllllllllllllllllllllllllllllllllllllllllllllllllllllll')
 
     post = Post.objects.get(pk=post_id)
     data['0'] = post.id
@@ -294,9 +279,7 @@ def fetch_post_detail(request):
         data['1'].append({'0': comment.id, '1': []})
     for i in range(len(post.comments.all())):
         f(data['1'][i])
-    # print(data, 'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
     data = json.dumps(data)
-    # data = serializers.serialize('json', data)
     return HttpResponse(data)
         
 def fetch_post(request, post_id):
@@ -311,7 +294,6 @@ def fetch_comment(request, comment_id):
 
 def send_profile_by_id(request, user_id):
     user = User.objects.filter(pk=user_id)
-    print(user)
     data = serializers.serialize('json', user)
     return HttpResponse(data)
 
@@ -324,8 +306,6 @@ def add_comment(request):
     parentId = body['parentId']
     myId = body['myId']
     text = body['text']
-    print(text, 'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
-    print(fromPost, parentId, myId, text)
     user = User.objects.get(pk=myId)
     if fromPost:
         post = Post.objects.get(pk=parentId)
@@ -338,7 +318,6 @@ def add_comment(request):
         comment = Comment.objects.get(pk=parentId)
         newComment = Comment(creator=user, text=text)
         newComment.save()
-        print(newComment, '.............................................................')
         comment.replies.add(newComment)
         comment.save()
     return Response('Added')
@@ -348,10 +327,20 @@ def like(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     postId = body['postId']
+    userId = body['userId']
     post = Post.objects.get(pk=postId)
-    post.likes += 1
+    user = User.objects.get(pk=userId)
+    if user not in post.likes.all() and user not in post.dislikes.all():
+        post.likes.add(user)
+    elif user not in post.likes.all() and user in post.dislikes.all():
+        post.likes.add(user)
+        post.dislikes.remove(user)
+    else:
+        post.likes.remove(user)
     post.save()
-    return HttpResponse('done')
+    data = {'likes': post.likes.count(), 'dislikes': post.dislikes.count()}
+    data = json.dumps(data)
+    return HttpResponse(data)
 
 @api_view(['POST'])
 @csrf_exempt
@@ -359,10 +348,34 @@ def dislike(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     postId = body['postId']
+    userId = body['userId']
     post = Post.objects.get(pk=postId)
-    post.dislikes += 1
+    user = User.objects.get(pk=userId)
+    if user not in post.dislikes.all() and user not in post.likes.all():
+        post.dislikes.add(user)
+    elif user not in post.dislikes.all() and user in post.likes.all():
+        post.likes.remove(user)
+        post.dislikes.add(user)
+    else:
+        post.dislikes.remove(user)
     post.save()
-    return HttpResponse('done')
+    data = {'likes': post.likes.count(), 'dislikes': post.dislikes.count()}
+    data = json.dumps(data)
+    return HttpResponse(data)
+
+def likes_and_dislikes(request, post_id):
+    user_id = request.GET.get('userId')
+    print(user_id, 'pppppppppppppppppppppppppppppppppppppppppp')
+    post = Post.objects.get(pk=post_id)
+    user = User.objects.get(pk=user_id)
+    data = 2
+    if user in post.likes.all():
+        data = 1
+    elif user in post.dislikes.all():
+        data = 0
+    data = {'state': data}
+    data = json.dumps(data)
+    return HttpResponse(data)
 
 @csrf_exempt
 def edit_comment(request):
@@ -401,8 +414,31 @@ def fetch_followings(request, user_id):
     for relation in followingUsers:
         followingPerson = User.objects.get(pk=relation.followed.id)
         followings.append(followingPerson)
-    # followings.append(*(user.followingChannels.all()))
     for channel in user.followingChannels.all():
         followings.append(channel)
     data = serializers.serialize('json', followings)
+    return HttpResponse(data)
+@api_view(['POST'])
+@csrf_exempt
+def forgot_password(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    email = body['email']
+    password = django.contrib.auth.models.User.objects.make_random_password() 
+    data=None
+    if User.objects.filter(email=email).exists():
+        user = User.objects.filter(email=email)[0]
+        user.password = password
+        user.save()
+        send_mail(
+            'Arvin: Password Changed',
+            'Your new password is: '+password,
+            'wproject98991@gmail.com',
+            [email],
+            fail_silently=False,
+        )
+        data = {'success': True, 'message': 'We have sent a new password to your account'}
+    else:
+        data = {'success': False, 'message': 'User with this email not exist'}
+    data = json.dumps(data)
     return HttpResponse(data)
