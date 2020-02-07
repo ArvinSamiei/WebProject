@@ -10,9 +10,10 @@ import {
 	deleteComment,
 	editComment,
 	likesAndDislikes,
+	deletePost
 } from "../../actions";
 import "./PostDetail.css";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import Modal from "react-modal";
 import CopyToClipboard from "react-copy-to-clipboard";
 
@@ -37,8 +38,9 @@ export class PostDetail extends Component {
 		caller: 0,
 		text: "",
 		edit: false,
-		value: '',
-		copied: false
+		value: "",
+		copied: false,
+		redirect: false
 	};
 	forPost = true;
 
@@ -210,6 +212,41 @@ export class PostDetail extends Component {
 		}
 	};
 
+	renderDeleteButtonForPost = () => {
+		if (this.props.user.id == this.props.postDetail["0"].creator_id) {
+			return (
+				<button
+					style={{ marginLeft: "10px" }}
+					className="btn btn-danger"
+					onClick={e => {
+						this.props.deletePost(this.props.postDetail["0"].id);
+						this.setState({redirect: true})
+					}}
+				>
+					Delete
+				</button>
+			);
+		} else {
+			return null;
+		}
+	};
+
+	renderEditButtonForPost = () => {
+		if (this.props.user.id == this.props.postDetail["0"].creator_id) {
+			return (
+				<Link
+					to={`/createPost/${this.props.postDetail["0"].id}`}
+					style={{ marginLeft: "10px" }}
+					className="btn btn-primary"
+				>
+					Edit
+				</Link>
+			);
+		} else {
+			return null;
+		}
+	};
+
 	renderComments = () => {
 		let result = [];
 		for (let i = 0; i < this.props.postDetail["1"].length; i++) {
@@ -368,11 +405,17 @@ export class PostDetail extends Component {
 		);
 	};
 
-	createText = () => { return {__html: this.props.postDetail["0"].text}; };
+	createText = () => {
+		return { __html: this.props.postDetail["0"].text };
+	};
 
 	render() {
 		if (!this.props.postDetail) {
 			return null;
+		}
+
+		if(this.state.redirect){
+			return <Redirect to='/'></Redirect>
 		}
 		let user = this.findName(this.props.postDetail["0"].creator_id);
 		if (!user) {
@@ -394,23 +437,28 @@ export class PostDetail extends Component {
 						</h1>
 					</Link>
 					{this.renderImageOfPost()}
-
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
 					<p dangerouslySetInnerHTML={this.createText()}></p>
-					<CopyToClipboard
-						className="btn btn-primary"
-						text={`http://127.0.0.1:3000/post/${this.props.postDetail["0"].id}`}
-						onCopy={() => this.setState({ copied: true })}
-					>
-						<span>Copy Link</span>
-					</CopyToClipboard>
-					&nbsp;
-					{this.state.copied ? <span class="bg-success">Copied.</span> : null}
+					
+					
 					{this.renderLikeImage()}
 					{this.props.likes}
 					{this.renderDislikeImage()}
 					{this.props.dislikes}
+					<div>
+						<CopyToClipboard
+							className="btn btn-success"
+							text={`http://127.0.0.1:3000/post/${this.props.postDetail["0"].id}`}
+							onCopy={() => this.setState({ copied: true })}
+						>
+							<span>Copy Link</span>
+						</CopyToClipboard>
+						&nbsp;
+						{this.state.copied ? <span class="bg-info">Copied.</span> : null}
+						{this.renderEditButtonForPost()}
+						{this.renderDeleteButtonForPost()}
+					</div>
 				</div>
 
 				<ul
@@ -500,4 +548,5 @@ export default connect(mapStateToProps, {
 	deleteComment,
 	editComment,
 	likesAndDislikes,
+	deletePost
 })(PostDetail);

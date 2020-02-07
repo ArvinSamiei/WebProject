@@ -126,6 +126,30 @@ def createPost(request):
     post.save()
     return Response('', status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+@parser_classes([MultiPartParser])
+@csrf_exempt
+def editPost(request):
+    image = request.data['image']
+    title = request.data['title']
+    text = request.data['text']
+    postId = request.data['postId']
+    post = Post.objects.get(pk=postId)
+    post.title = title
+    post.text = text
+    post.image = image
+    post.save()
+    return Response('', status=status.HTTP_200_OK)
+
+@csrf_exempt
+def deletePost(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    postId = body['postId']
+    post = Post.objects.get(pk=postId)
+    post.delete()
+    return HttpResponse('Post Deleted')
+
 def fetch_posts_following(id):
     posts = list(Post.objects.all())
     user = User.objects.get(pk=id)

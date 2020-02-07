@@ -360,6 +360,52 @@ const f = async function(responseData, myData, dispatch) {
 	}
 };
 
+export const fetchPost = postId => {
+	return function(dispatch) {
+		backend
+			.get(`posts/${postId}`, {
+				params: {
+					id: postId,
+				},
+			})
+			.then(r => {
+				dispatch({
+					type: "FETCH_POST",
+					payload: { ...r.data[0].fields, id: r.data[0].pk },
+				});
+			});
+	};
+};
+
+export const editPost = (postId, title, text, image) => {
+	return function(dispatch) {
+		var formData = new FormData();
+		formData.append("image", image[0]);
+		formData.append("title", title);
+		formData.append("text", text);
+		formData.append("postId", postId);
+		backend
+			.post("posts/editPost/", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then(r => {
+				console.log(r);
+			});
+	};
+};
+
+export const deletePost = (postId) => {
+	return function(dispatch) {
+		backend.post('posts/deletePost/', {
+			postId
+		}).then(r => {
+			console.log(r)
+		})
+	}
+}
+
 export const fetchPostDetail = id => {
 	return async function(dispatch) {
 		let r = await backend.get("posts/detail/", {
@@ -498,7 +544,7 @@ export const fetchFollowings = userId => {
 
 export const forgotPassword = email => {
 	return function(dispatch) {
-		backend.post("users/forgotPassword", {email}).then(r => {
+		backend.post("users/forgotPassword", { email }).then(r => {
 			dispatch({
 				type: "FORGOT_PASSWORD",
 				payload: { success: r.data.success, message: r.data.message },

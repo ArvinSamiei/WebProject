@@ -18,6 +18,8 @@ urlpatterns = [
     re_path('users/profile/(?P<username>.+)$', views.send_profile),
     path('posts', views.fetchAllPosts),
     path('posts/createPost/', views.createPost),
+    path('posts/editPost/', views.editPost),
+    path('posts/deletePost/', views.deletePost),
     path('users/profiles/<int:user_id>/', views.fetch_user),
     path('images/posts/<int:post_id>', views.download_image_post),
     path('users/othersProfile/<int:id>', views.others_profile),

@@ -22,7 +22,7 @@ export default class App extends Component {
 					<Switch>
 						<PrivateRoute exact path="/profile" component={Profile} />
 						<PrivateRoute exact path="/" component={PostList} />
-						<PrivateRoute path="/createPost" component={CreatePost} />
+						<PrivateRoute exact path="/createPost" component={CreatePost} />
 						{/* <Route
 							exact
 							path="/"
@@ -38,6 +38,15 @@ export default class App extends Component {
 							render={props => (
 								<div>
 									<OthersProfile id={props.match.params.id} />
+								</div>
+							)}
+						/>
+						<Route
+							exact
+							path="/createPost/:id"
+							render={props => (
+								<div>
+									<CreatePost idForEdit={props.match.params.id} />
 								</div>
 							)}
 						/>
