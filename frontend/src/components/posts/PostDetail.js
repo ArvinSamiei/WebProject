@@ -14,6 +14,7 @@ import {
 import "./PostDetail.css";
 import { Link } from "react-router-dom";
 import Modal from "react-modal";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 const customStyles = {
 	content: {
@@ -36,6 +37,8 @@ export class PostDetail extends Component {
 		caller: 0,
 		text: "",
 		edit: false,
+		value: '',
+		copied: false
 	};
 	forPost = true;
 
@@ -393,6 +396,15 @@ export class PostDetail extends Component {
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
 					<p>{this.props.postDetail["0"].text}</p>
+					<CopyToClipboard
+						className="btn btn-primary"
+						text={`http://127.0.0.1:3000/post/${this.props.postDetail["0"].id}`}
+						onCopy={() => this.setState({ copied: true })}
+					>
+						<span>Copy Link</span>
+					</CopyToClipboard>
+					&nbsp;
+					{this.state.copied ? <span class="bg-success">Copied.</span> : null}
 					{this.renderLikeImage()}
 					{this.props.likes}
 					{this.renderDislikeImage()}
@@ -472,7 +484,7 @@ const mapStateToProps = state => {
 		user: state.user,
 		likesDislikes: state.likesDislikes,
 		likes: state.numLikesDislikes.likes,
-		dislikes: state.numLikesDislikes.dislikes
+		dislikes: state.numLikesDislikes.dislikes,
 	};
 };
 
