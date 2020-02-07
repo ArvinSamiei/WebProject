@@ -368,6 +368,8 @@ export class PostDetail extends Component {
 		);
 	};
 
+	createText = () => { return {__html: this.props.postDetail["0"].text}; };
+
 	render() {
 		if (!this.props.postDetail) {
 			return null;
@@ -395,7 +397,7 @@ export class PostDetail extends Component {
 
 					<p className="h2">{this.props.postDetail["0"].title}</p>
 					<br />
-					<p>{this.props.postDetail["0"].text}</p>
+					<p dangerouslySetInnerHTML={this.createText()}></p>
 					<CopyToClipboard
 						className="btn btn-primary"
 						text={`http://127.0.0.1:3000/post/${this.props.postDetail["0"].id}`}
