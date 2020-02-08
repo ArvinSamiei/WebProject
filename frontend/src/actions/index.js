@@ -30,8 +30,8 @@ export const login = (username, password) => {
 };
 
 export const signup = (username, password, email, lastname, name, picture) => {
-	return async function(dispatch) {
-		await backend
+	return function(dispatch) {
+		backend
 			.post("users/signup/", {
 				username,
 				password,
@@ -44,13 +44,12 @@ export const signup = (username, password, email, lastname, name, picture) => {
 					if (r.status === 200) {
 						localStorage.setItem("username", username);
 						localStorage.setItem("time", Date.now());
-						setTimeout(() => {
-							localStorage.removeItem("username");
-						});
 						dispatch({
 							type: "SIGNUP",
-							payload: { success: true, message: r.message },
+							payload: { success: true, message: r.data.message },
 						});
+						dispatch(fetchPosts(r.data.id, "Following"));
+						dispatch(changeImage(picture, username));
 					}
 				},
 				e => {
@@ -60,7 +59,7 @@ export const signup = (username, password, email, lastname, name, picture) => {
 					});
 				},
 			);
-		dispatch(changeImage(picture, username));
+		
 	};
 };
 
