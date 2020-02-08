@@ -31,7 +31,12 @@ urlpatterns = [
     path('comments/<int:comment_id>', views.fetch_comment),
     path('users/<int:user_id>/followers', views.fetch_followers),
     path('users/<int:user_id>/followings', views.fetch_followings),
-    path('users/forgotPassword', views.forgot_password)
+    path('users/forgotPassword', views.forgot_password),
     
+    path('channel/createChannel', views.create_channel),
+    path('users/<int:user_id>/viewChannel', views.view_channel),
+    path('users/addOrRemoveAuthor', views.add_or_remove_author),
+    path('users/followChannel', views.follow_channel)
+
 
 ]

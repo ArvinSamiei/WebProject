@@ -6,7 +6,25 @@ from rest_framework import serializers
 class Channel(models.Model):
     admin = models.ForeignKey(
         'User', on_delete=models.CASCADE, related_name='admin')
+    authors = models.ManyToManyField('User', related_name='authors')
     members = models.ManyToManyField('User', related_name='members')
+
+    posts = models.ManyToManyField('Post', related_name='posts')
+    
+    name = models.CharField(max_length=30, unique=True)
+    title = models.CharField(max_length=50)
+    decription = models.CharField(max_length=100)
+    rules = models.CharField(max_length=100)
+
+class UserChannelRelation(models.Model):
+    the_user = models.ForeignKey(
+        'User', on_delete=models.CASCADE, related_name='the_user')
+    the_channel = models.ForeignKey(
+        'Channel', on_delete=models.CASCADE, related_name='the_channel')
+    relation_type = models.IntegerField()       # {0: admin /1: author /2: follower} of the channel   
+
+    class Meta:
+        unique_together = ('the_user', 'the_channel', 'relation_type')
 
 
 class User(models.Model):

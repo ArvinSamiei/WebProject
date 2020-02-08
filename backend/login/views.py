@@ -521,3 +521,83 @@ def forgot_password(request):
         data = {'success': False, 'message': 'User with this email not exist'}
     data = json.dumps(data)
     return HttpResponse(data)
+
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser])
+@csrf_exempt
+def create_channel(request):
+    name = request.data['name']
+    title = request.data['title']
+    description = request.data['description']
+    admin_id = request.data['id']
+    channel = Channel(name=name, admin=admin_id,
+                title=title, tedescriptionxt=description)
+    channel.save()
+    return Response('', status=status.HTTP_200_OK)
+
+
+def view_channel(request, user_id):
+    user = User.objects.get(pk=user_id)
+    myChannels = Channel.objects.filter(admin=user).all()
+
+    if not myChannels:
+        return HttpResponse([])
+    
+    data = serializers.serialize('json', myChannel[0])
+    return HttpResponse(data)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def add_or_remove_author(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    myId = int(body['myId'])
+    hisId = int(body['hisId'])
+    adding = body['follow']
+    
+    him = User.objects.filter(pk=hisId)[0]
+    me = User.objects.filter(pk=myId)[0]
+    if him == me:
+        return Response('An Error Occured', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if not Channel.objects.filter(admin=me).all():
+        return Response('An Error Occured', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    myChannel = Channel.objects.filter(admin=me).all()[0]
+    if adding:
+        userChannelRelation = UserChannelRelation(the_user=him, the_channel=myChannel, relationtype=1)
+        userChannelRelation.save()
+        return HttpResponse('You Added '+him.full_name+ ' to Authors')
+    else:
+        userChannelRelation = UserChannelRelation.objects.filter(
+            the_user=him, the_channel=myChannel, relationtype=1)
+        userChannelRelation.delete()
+        return HttpResponse('You Removed '+him.full_name+ ' from Authors')
+
+
+@api_view(['POST'])
+@csrf_exempt
+def follow_channel(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    myId = body['myId']
+    channelId = body['channelId']
+    followe = body['follow']
+    channelId = int(channelId)
+    channel = Channel.objects.filter(pk=channelId)[0]
+    me = User.objects.filter(pk=myId)[0]
+    
+    if not UserChannelRelation.objects.filter(the_user=me, the_channel=channel, relation_type=0).all():
+        return Response('An Error Occured', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if followe:
+        userChannelRelation = UserChannelRelation(the_user=me, the_channel=channel, relation_type=2)
+        userChannelRelation.save()
+        return HttpResponse('You Followed '+channel.name)
+    else:
+        userChannelRelation = UserChannelRelation.objects.filter(
+            the_user=me, the_channel=chanel, relation_type=2)
+        userChannelRelation.delete()
+        return HttpResponse('You Unfollowed '+channel.name)
