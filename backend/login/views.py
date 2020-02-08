@@ -63,9 +63,10 @@ def signup(request):
     except IntegrityError as e:
         if 'unique constraint' in e.message:
             return Response('You Have Already SignedUp', status=status.HTTP_400_BAD_REQUEST)
-    return Response('SignUp Succesful', status=status.HTTP_200_OK, headers={
-        'Set-Cookie': 'id=' + str(user.id)+'; Expires='+datetime.datetime.strftime(datetime.datetime.utcnow() + datetime.timedelta(days=7), "%a, %d-%b-%Y %H:%M:%S GMT")+'; Domain=127.0.0.1',
-        'Access-Control-Expose-Headers': '*'
+    return Response({'message': 'Signup Successful', 'id': user.id}, status=status.HTTP_200_OK, headers={
+        'Set-Cookie': 'id=' + str(user.id)+'; Path=/; Expires='+datetime.datetime.strftime(datetime.datetime.utcnow() + datetime.timedelta(days=7), "%a, %d-%b-%Y %H:%M:%S GMT")+'; Domain=127.0.0.1',
+        'Access-Control-Expose-Headers': '*',
+        'Access-Control-Allow-Credentials': True
     })
 
 
