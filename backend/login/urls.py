@@ -37,9 +37,9 @@ urlpatterns = [
     path('users/<int:user_id>/viewChannel', views.view_channel),
     path('users/addOrRemoveAuthor', views.add_or_remove_author),
     path('users/followChannel', views.follow_channel),
-    path('searchPost' , views.searchPost),
-    path('searchUser' , views.searchUser),
-    path('searchChannel' , views.searchChannel)
+    path('search/searchPost' , views.searchPost),
+    path('search/searchUser' , views.searchUser),
+    path('search/searchChannel' , views.searchChannel),
 
 
 ]

@@ -10,9 +10,21 @@ export class Profile extends Component {
 	componentDidMount() {
 		this.props.fetchUser(localStorage.getItem("username"));
 		if (this.props.user) {
-			this.props.fetchUserAndFollowingState(this.props.user.id, this.props.id);
+			this.props.fetchUserAndFollowingState(this.getCookie('id'), this.props.id);
 		}
 	}
+
+	getCookie = name => {
+		var value = "; " + document.cookie;
+		var parts = value.split("; " + name + "=");
+		if (parts.length === 2)
+			return parts
+				.pop()
+				.split(";")
+				.shift();
+	};
+
+
 
 	renderButtonText = () => {
 		if (this.props.otherUserFollowing.follow) {
@@ -83,6 +95,7 @@ export class Profile extends Component {
 
 	render() {
 		if (!this.props.otherUser) {
+			this.props.fetchUserAndFollowingState(this.getCookie('id'), this.props.id);
 			return null;
 		}
 		return (

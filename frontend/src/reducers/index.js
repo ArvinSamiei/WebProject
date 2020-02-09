@@ -18,6 +18,9 @@ import likesDislikes from './likesAndDislikes'
 import numLikesDislikes from './numLikesDislikes'
 import forgotPassword from './forgotPassword'
 import fetchPost from './fetchPost'
+import searchChannels from './searchChannels'
+import searchUsers from './searchUsers'
+import searchPosts from './searchPosts'
 
 export default combineReducers({
 	login: loginReducer,
@@ -38,5 +41,8 @@ export default combineReducers({
 	likesDislikes,
 	numLikesDislikes,
 	forgotPassword,
-	fetchPost
+	fetchPost,
+	searchChannels,
+	searchPosts,
+	searchUsers
 });

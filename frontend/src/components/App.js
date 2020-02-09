@@ -10,8 +10,9 @@ import CreatePost from "./posts/CreatePost";
 import OthersProfile from "./OthersProfile";
 import ChangePassword from "./ChangePassword";
 import ChangeAccount from "./ChangeAccount";
-import PostDetail from './posts/PostDetail'
-import  ForgotPassword  from "./ForgotPassword";
+import PostDetail from "./posts/PostDetail";
+import ForgotPassword from "./ForgotPassword";
+import  SearchResult  from "./SearchResult";
 
 export default class App extends Component {
 	render() {
@@ -41,6 +42,17 @@ export default class App extends Component {
 								</div>
 							)}
 						/>
+
+						<Route
+							exact
+							path="/searchResults/:query"
+							render={props => (
+								<div>
+									<SearchResult query={props.match.params.query} />
+								</div>
+							)}
+						/>
+
 						<Route
 							exact
 							path="/createPost/:id"

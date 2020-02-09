@@ -41,7 +41,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-file1 = open('/home/amirgolpaa24/D:/account.txt', 'r')
+file1 = open('D:/account.txt', 'r')
 
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

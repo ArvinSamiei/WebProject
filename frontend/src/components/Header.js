@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login, logout, search } from "../actions";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchField from "react-search-field";
 
 
 export class Header extends Component {
+	state = {toResults: false, query: ''}
 	renderLogin = () => {
 		if (
 			!this.props.isLoggedIn &&
@@ -95,7 +96,6 @@ export class Header extends Component {
 							e.stopPropagation();
 							localStorage.removeItem("username")
 							this.props.logout();
-							window.location.href='/login'
 						}}
 					>
 						Logout
@@ -106,37 +106,43 @@ export class Header extends Component {
 			return null;
 		}
 	};
+
+	handleChange = (e) => {
+		this.setState({query: e.target.value})
+	}
 	
 	
 	
 	renderSearchbar = () => {
-		var i;
-		this.myInput = React.createRef();
-		this.Search= function(i){
-			 //alert(i);
-			 window.location.href=`/search/${i}`
-			 search(i);
-		  };
 
 		if (
 			!(!this.props.isLoggedIn && !this.props.isSignedup && !document.cookie)
 		) {
 			return (
-				<SearchField
+				<li style={{float: 'right'}} className="nav-item">
+				<input
+					type='text'
 					id = 'search'
-					ref={this.myInput}
   					placeholder="Search..."
 					classNames="test-class"
-					searchText = {i}
-					onSearchClick = {this.Search.bind(i)}
-					onEnter = {this.Search.bind(i)}
+					searchText = {''}
+					// onSearchClick = {this.gotoResults}
+					// onEnter = {this.gotoResults}
+					onChange={this.handleChange}
+
 				/>
+				<Link to={`/searchResults/${this.state.query}`}><img style={{width: '30px', height: '30px'}} src="https://img.icons8.com/pastel-glyph/64/000000/search--v1.png" /></Link>
+				</li>
 				);
 		} else {
 			return null;
 		}	
 
 	};
+
+	gotoResults = () => {
+		this.setState({ toResults: true })
+	}
 	
 
 	renderImage = () => {
@@ -154,6 +160,9 @@ export class Header extends Component {
 	};
 
 	render() {
+		// if(this.state.toResults) {
+		// 	return <Redirect to={`/searchResults/${this.state.query}`} />
+		// }
 		
 		return (
 			<nav className="navbar navbar-expand-lg navbar-dark bg-dark">

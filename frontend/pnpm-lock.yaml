@@ -10,6 +10,7 @@ dependencies:
   react-images-upload: 1.2.7_react-dom@16.12.0
   react-modal: 3.11.1_react-dom@16.12.0+react@16.12.0
   react-scripts: 3.3.1
+  react-search-field: 1.0.0
 lockfileVersion: 5.1
 packages:
   /@babel/code-frame/7.8.3:
@@ -8596,6 +8597,13 @@ packages:
       react: '>=0.14.0'
     resolution:
       integrity: sha512-59+AHNnHYCdiC+vMwY52WmvP5dM3QLeoumYuEyceQDi9aEhtwN9zIQ2ZNo25sMyXnbh32h+P1ezDsUpUH3JAew==
+  /prop-types/15.6.2:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+    dev: false
+    resolution:
+      integrity: sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
   /prop-types/15.7.2:
     dependencies:
       loose-envify: 1.4.0
@@ -8839,6 +8847,18 @@ packages:
       react: ^16.0.0
     resolution:
       integrity: sha512-LMxFfAGrcS3kETtQaCkTKjMiifahaMySFDn71fZUNpPHZQEzmk/GiAeIT8JSOrHB23fnuCOMruL2a8NYlw+8Gw==
+  /react-dom/16.6.3_react@16.6.3:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.6.2
+      react: 16.6.3
+      scheduler: 0.11.3
+    dev: false
+    peerDependencies:
+      react: ^16.6.3
+    resolution:
+      integrity: sha512-8ugJWRCWLGXy+7PmNh8WJz3g1TaTUt1XyoIcFN+x0Zbkoz+KKdUyx1AQLYJdbFXjuF41Nmjn5+j//rxvhFjgSQ==
   /react-error-overlay/6.0.5:
     dev: false
     resolution:
@@ -8969,6 +8989,15 @@ packages:
         optional: true
     resolution:
       integrity: sha512-DHvc+/QN0IsLvmnPQqd+H70ol+gdFD3p/SS2tX8M6z1ysjtRGvOwLWy72co1nphYGpq1NqV/Ti5dviU8SCAXpA==
+  /react-search-field/1.0.0:
+    dependencies:
+      prop-types: 15.6.2
+      react: 16.6.3
+      react-dom: 16.6.3_react@16.6.3
+      typeco: 1.0.0
+    dev: false
+    resolution:
+      integrity: sha512-oeHQfWQM3R6mX6Q/u7S1N4WcEYZwFXq4NrLIber7Q0+ESTcYKhOYxGtmTWjbEtzbQFl9FqORtj6Ws72hNA4hYQ==
   /react-transition-group/4.3.0_react-dom@16.12.0+react@16.12.0:
     dependencies:
       '@babel/runtime': 7.8.4
@@ -8993,6 +9022,17 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
+  /react/16.6.3:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      prop-types: 15.6.2
+      scheduler: 0.11.3
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-zCvmH2vbEolgKxtqXL2wmGCUxUyNheYn/C+PD1YAjfxHC54+MhdruyhO7QieQrYsYeTxrn93PM2y0jRH1zEExw==
   /read-pkg-up/2.0.0:
     dependencies:
       find-up: 2.1.0
@@ -9497,6 +9537,13 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-Ydydq3zC+WYDJK1+gRxRapLIED9PWeSuuS41wqyoRmzvhhh9nc+QQrVMKJYzJFULazeGhzSV0QleN2wD3boh2g==
+  /scheduler/0.11.3:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+    dev: false
+    resolution:
+      integrity: sha512-i9X9VRRVZDd3xZw10NY5Z2cVMbdYg6gqFecfj79USv1CFN+YrJ3gIPRKf1qlY+Sxly4djoKdfx1T+m9dnRB8kQ==
   /scheduler/0.18.0:
     dependencies:
       loose-envify: 1.4.0
@@ -10498,6 +10545,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-KBt58xCHry4Cejnc2ISQAF7QY+ORngsWfxezO68+12hKV6lQY8P/psIkcbjeHWn7MqcgciWJyCCevFMJdIXpow==
+  /typeco/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-3mWzemIyiY5jL/fmW2sZp1vv7ifQ5ONjF6fT/4RMHJw3/1oabumpxvYZ9D+z01a5wRFSRPPXZkQjM4WIUzY+GA==
   /typedarray/0.0.6:
     dev: false
     resolution:
@@ -11260,3 +11311,4 @@ specifiers:
   react-images-upload: ^1.2.7
   react-modal: ^3.11.1
   react-scripts: 3.3.1
+  react-search-field: ^1.0.0

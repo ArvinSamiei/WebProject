@@ -1,25 +1,38 @@
 import backend from "../apis/backend";
 
-
-export const search = (searchField) => {
-	console.log(searchField)
-	return function(dispatch){
-		console.log(searchField)
-		backend.get(`search/${searchField}/`, {query: searchField})
-		.then(
-			r=> {
-				dispatch(backend.get(`searchUser`, {query: searchField}));
-				dispatch(backend.get(`searchPost`, {query: searchField}));
-				dispatch(backend.get(`searchChannel`, {query: searchField}));
-
-				});
-			
-		
-	}
-}
-
-
-
+export const search = searchField => {
+	console.log(searchField);
+	return function(dispatch) {
+		console.log(searchField);
+		backend
+			.get("search/searchPost", {
+				params: {
+					query: searchField,
+				},
+			})
+			.then(r => {
+				dispatch({ type: "SEARCH_RESULTS_POSTS", payload: r.data });
+			});
+		backend
+			.get("search/searchUser", {
+				params: {
+					query: searchField,
+				},
+			})
+			.then(r => {
+				dispatch({ type: "SEARCH_RESULTS_USERS", payload: r.data });
+			});
+		backend
+			.get("search/searchChannel", {
+				params: {
+					query: searchField,
+				},
+			})
+			.then(r => {
+				dispatch({ type: "SEARCH_RESULTS_CHANNELS", payload: r.data });
+			});
+	};
+};
 
 export const login = (username, password) => {
 	return function(dispatch) {
@@ -80,7 +93,6 @@ export const signup = (username, password, email, lastname, name, picture) => {
 					});
 				},
 			);
-		
 	};
 };
 
@@ -183,7 +195,7 @@ export const createPost = (id, title, text, type, image) => {
 
 export const fetchPosts = (id, name) => {
 	return async function(dispatch) {
-		dispatch({type: 'REMOVE_ALL_POSTS', payload:[]})
+		dispatch({ type: "REMOVE_ALL_POSTS", payload: [] });
 		try {
 			let r = await backend.get(`/posts`, {
 				params: {
@@ -191,9 +203,11 @@ export const fetchPosts = (id, name) => {
 					name,
 				},
 			});
-			console.log(r)
+			console.log(r);
 			let posts = r.data;
-			posts.sort(function(a, b){return a.create_date-b.create_date})
+			posts.sort(function(a, b) {
+				return a.create_date - b.create_date;
+			});
 
 			dispatch({ type: "FETCH_ALL_POSTS", payload: r.data });
 			for (let i = 0; i < posts.length; i++) {
@@ -420,15 +434,17 @@ export const editPost = (postId, title, text, image) => {
 	};
 };
 
-export const deletePost = (postId) => {
+export const deletePost = postId => {
 	return function(dispatch) {
-		backend.post('posts/deletePost/', {
-			postId
-		}).then(r => {
-			console.log(r)
-		})
-	}
-}
+		backend
+			.post("posts/deletePost/", {
+				postId,
+			})
+			.then(r => {
+				console.log(r);
+			});
+	};
+};
 
 export const fetchPostDetail = id => {
 	return async function(dispatch) {
