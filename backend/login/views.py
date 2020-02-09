@@ -610,7 +610,7 @@ def follow_channel(request):
 def searchPost(request):
     query = request.GET.get('query')
     print(query)
-    fetched_posts = Post.objects.filter(title = query)
+    fetched_posts = Post.objects.filter(title__icontains = query)
     postse = serializers.serialize(
         'json', fetched_posts)
     print(postse)
@@ -621,7 +621,7 @@ def searchPost(request):
 def searchUser(request):
     query = request.GET.get('query')
     print(query)
-    fetched_users = User.objects.filter(username = query)
+    fetched_users = User.objects.filter(Q(username_icontains = query) | Q(first_name__icontains=query) | Q(last_name__icontains=query))
     postse = serializers.serialize(
         'json', fetched_users)
     print(postse)
@@ -631,7 +631,7 @@ def searchUser(request):
 @csrf_exempt
 def searchChannel(request):
     query = request.GET.get('query')
-    fetched_channels = Channel.objects.filter(title = query)
+    fetched_channels = Channel.objects.filter(name__icontains = query)
     postse = serializers.serialize(
         'json', fetched_channels)
     print(postse)
