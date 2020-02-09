@@ -602,3 +602,37 @@ def follow_channel(request):
             the_user=me, the_channel=chanel, relation_type=2)
         userChannelRelation.delete()
         return HttpResponse('You Unfollowed '+channel.name)
+        
+        
+        
+@api_view(['GET'])
+@csrf_exempt
+def searchPost(request):
+    query = request.GET.get('query')
+    print(query)
+    fetched_posts = Post.objects.filter(title = query)
+    postse = serializers.serialize(
+        'json', fetched_posts)
+    print(postse)
+    return HttpResponse(postse)
+
+@api_view(['GET'])
+@csrf_exempt
+def searchUser(request):
+    query = request.GET.get('query')
+    print(query)
+    fetched_users = User.objects.filter(username = query)
+    postse = serializers.serialize(
+        'json', fetched_users)
+    print(postse)
+    return HttpResponse(postse)
+
+@api_view(['GET'])
+@csrf_exempt
+def searchChannel(request):
+    query = request.GET.get('query')
+    fetched_channels = Channel.objects.filter(title = query)
+    postse = serializers.serialize(
+        'json', fetched_channels)
+    print(postse)
+    return HttpResponse(postse)

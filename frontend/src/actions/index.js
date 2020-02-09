@@ -1,5 +1,26 @@
 import backend from "../apis/backend";
 
+
+export const search = (searchField) => {
+	console.log(searchField)
+	return function(dispatch){
+		console.log(searchField)
+		backend.get(`search/${searchField}/`, {query: searchField})
+		.then(
+			r=> {
+				dispatch(backend.get(`searchUser`, {query: searchField}));
+				dispatch(backend.get(`searchPost`, {query: searchField}));
+				dispatch(backend.get(`searchChannel`, {query: searchField}));
+
+				});
+			
+		
+	}
+}
+
+
+
+
 export const login = (username, password) => {
 	return function(dispatch) {
 		backend

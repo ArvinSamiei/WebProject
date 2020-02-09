@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { login, logout } from "../actions";
+import { login, logout, search } from "../actions";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import SearchField from "react-search-field";
 
 
 export class Header extends Component {
@@ -105,6 +106,38 @@ export class Header extends Component {
 			return null;
 		}
 	};
+	
+	
+	
+	renderSearchbar = () => {
+		var i;
+		this.myInput = React.createRef();
+		this.Search= function(i){
+			 //alert(i);
+			 window.location.href=`/search/${i}`
+			 search(i);
+		  };
+
+		if (
+			!(!this.props.isLoggedIn && !this.props.isSignedup && !document.cookie)
+		) {
+			return (
+				<SearchField
+					id = 'search'
+					ref={this.myInput}
+  					placeholder="Search..."
+					classNames="test-class"
+					searchText = {i}
+					onSearchClick = {this.Search.bind(i)}
+					onEnter = {this.Search.bind(i)}
+				/>
+				);
+		} else {
+			return null;
+		}	
+
+	};
+	
 
 	renderImage = () => {
 		let username = localStorage.getItem("username");
@@ -142,6 +175,7 @@ export class Header extends Component {
 						{this.renderSignup()}
 						{this.renderProfile()}
 						{this.renderLogout()}
+						{this.renderSearchbar()}
 					</ul>
 				</div>
 			</nav>
